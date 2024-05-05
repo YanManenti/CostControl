@@ -1,3 +1,14 @@
 <resources>
     <string name="app_name">CostControl</string>
+    <string name="logoDescription">Logomarca da empresa</string>
+    <string name="email">E-Mail</string>
+    <string name="senha">Senha</string>
+    <string name="emailPlaceholder">Preencha o seu e-mail...</string>
+    <string name="senhaPlaceholder">Preencha a sua senha...</string>
+    <string name="login">LOGIN</string>
+    <string name="lembrarLogin">Lembrar login</string>
+    <string name="criarConta">CRIAR CONTA</string>
+    <string name="resetarSenha">RESETAR SENHA</string>
+    <string name="repitaEmail">Repita seu E-Mail</string>
+    <string name="repitaSenha">Repita sua Senha</string>
 </resources>
