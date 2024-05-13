@@ -5,10 +5,16 @@
     <string name="senha">Senha</string>
     <string name="emailPlaceholder">Preencha o seu e-mail...</string>
     <string name="senhaPlaceholder">Preencha a sua senha...</string>
+    <string name="nomeViagem">Preencha o nome da viagem...</string>
     <string name="login">LOGIN</string>
     <string name="lembrarLogin">Lembrar login</string>
     <string name="criarConta">CRIAR CONTA</string>
     <string name="resetarSenha">RESETAR SENHA</string>
     <string name="repitaEmail">Repita seu E-Mail</string>
     <string name="repitaSenha">Repita sua Senha</string>
+    <string name="repitaEmailPlaceholder">Repita seu e-mail...</string>
+    <string name="repitaSenhaPlaceholder">Repita sua senha...</string>
+    <string name="novaViagem">Criar nova viagem</string>
+    <string name="viagens">Viagens</string>
+    <string name="buttonCriarViagem">Botao para criar viagem.</string>
 </resources>
