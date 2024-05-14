@@ -5,7 +5,7 @@
     <string name="senha">Senha</string>
     <string name="emailPlaceholder">Preencha o seu e-mail...</string>
     <string name="senhaPlaceholder">Preencha a sua senha...</string>
-    <string name="nomeViagem">Preencha o nome da viagem...</string>
+    <string name="nomeViagem">Preencha o nome do destino...</string>
     <string name="login">LOGIN</string>
     <string name="lembrarLogin">Lembrar login</string>
     <string name="criarConta">CRIAR CONTA</string>
