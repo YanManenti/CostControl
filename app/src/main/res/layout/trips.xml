@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
@@ -13,7 +14,7 @@
         android:background="@color/backgroundBlue"
         android:orientation="vertical"
         android:padding="30dp"
-        android:weightSum="20"
+        android:weightSum="21"
         tools:ignore="UselessParent">
 
         <TextView
@@ -23,19 +24,18 @@
             android:text="@string/viagens"
             android:textColor="@color/surfaceWhite"
             android:textSize="20sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"/>
 
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="16">
-
+            android:layout_weight="18">
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="5dp"
-                android:orientation="vertical">
-
+                android:orientation="vertical"
+                android:id="@+id/scrollContainer">
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -45,13 +45,14 @@
                     android:orientation="vertical"
                     android:padding="15dp"
                     android:weightSum="2">
+
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textStyle="bold"
-                        android:textSize="30sp"
+                        android:text="Destino"
                         android:textColor="@color/surfaceWhite"
-                        android:text="Destino"/>
+                        android:textSize="30sp"
+                        android:textStyle="bold"/>
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -69,7 +70,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Viajantes"
+                                android:text="@string/viajantes"
                                 android:textSize="12sp" />
 
                             <TextView
@@ -90,7 +91,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Preço por pessoa"
+                                android:text="@string/precoporpessoa"
                                 android:textSize="12sp" />
 
                             <TextView
@@ -108,7 +109,8 @@
                             android:layout_margin="5dp"
                             android:src="@drawable/settings_24px"
                             android:background="@drawable/customorangebutton"
-                            app:tint="@color/surfaceWhite" />
+                            app:tint="@color/surfaceWhite"
+                            android:contentDescription="@string/editarviajem" />
                     </LinearLayout>
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -126,7 +128,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Duração"
+                                android:text="@string/duracao"
                                 android:textSize="12sp" />
 
                             <TextView
@@ -147,7 +149,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Preço total"
+                                android:text="@string/precototal"
                                 android:textSize="12sp" />
 
                             <TextView
@@ -165,7 +167,8 @@
                             android:layout_margin="5dp"
                             android:src="@drawable/delete_24px"
                             android:background="@drawable/customorangebutton"
-                            app:tint="@color/surfaceWhite" />
+                            app:tint="@color/surfaceWhite"
+                            android:contentDescription="@string/excluirviajem" />
                     </LinearLayout>
                 </LinearLayout>
 
@@ -198,49 +201,21 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="3"
+            android:layout_weight="2"
             android:gravity="bottom"
             android:orientation="horizontal"
-            android:weightSum="3">
+            >
 
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_marginEnd="10dp"
-                android:layout_weight="3"
-                android:gravity="bottom"
-                android:orientation="vertical"
-                tools:ignore="NestedWeights">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="10dp"
-                    android:text="@string/novaViagem"
-                    android:textColor="@color/surfaceWhite"
-                    android:textSize="20sp"
-                    android:textStyle="bold" />
-
-                <EditText
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:autofillHints="travel"
-                    android:background="@drawable/custominputbackground"
-                    android:hint="@string/nomeViagem"
-                    android:inputType="text"
-                    android:padding="10dp" />
-            </LinearLayout>
-
-            <ImageButton
-                android:layout_width="wrap_content"
+            <androidx.appcompat.widget.AppCompatButton
+                android:fontFamily="@font/anton"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="@drawable/custominputbackground"
-                android:backgroundTint="@color/surfaceOrange"
-                android:contentDescription="@string/buttonCriarViagem"
-                android:maxWidth="15dp"
-                android:maxHeight="15dp"
-                android:src="@drawable/twotone_add_24" />
+                android:text="@string/novaViagem"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="@color/surfaceWhite"
+                android:background="@drawable/customorangebutton"
+                />
         </LinearLayout>
 
 

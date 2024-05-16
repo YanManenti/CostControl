@@ -32,7 +32,9 @@
             android:textColor="@color/surfaceWhite"
             android:fontFamily="@font/anton"
             android:text="@string/email"
-            />
+                android:paddingStart="5dp"
+                tools:ignore="RtlSymmetry"
+                />
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -51,6 +53,8 @@
                 android:textColor="@color/surfaceWhite"
                 android:fontFamily="@font/anton"
                 android:text="@string/repitaEmail"
+                android:paddingStart="5dp"
+                tools:ignore="RtlSymmetry"
                 />
             <EditText
                 android:layout_width="match_parent"
@@ -70,6 +74,8 @@
                 android:textColor="@color/surfaceWhite"
                 android:fontFamily="@font/anton"
                 android:text="@string/senha"
+                android:paddingStart="5dp"
+                tools:ignore="RtlSymmetry"
                 />
             <EditText
                 android:layout_width="match_parent"
@@ -89,6 +95,8 @@
                 android:textColor="@color/surfaceWhite"
                 android:fontFamily="@font/anton"
                 android:text="@string/repitaSenha"
+                android:paddingStart="5dp"
+                tools:ignore="RtlSymmetry"
                 />
             <EditText
                 android:layout_width="match_parent"

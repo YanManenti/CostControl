@@ -2,4 +2,5 @@
 <resources>
     <item type="id" name="loginBtn" />
     <item type="id" name="criarContaBtn" />
+    <item type="id" name="scrollContainer" />
 </resources>
