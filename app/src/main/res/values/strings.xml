@@ -66,4 +66,14 @@
     <string name="custoMedioNoitePlaceholder">Preencha o custo médio…</string>
     <string name="totalNoitesPlaceholder">Preencha o total…</string>
     <string name="totalQuartosPlaceholder">Preencha o total…</string>
+    <string name="nomeEntretenimento">Nome</string>
+    <string name="precoEntretenimento">Preço</string>
+    <string name="adicionar">ADICIONAR</string>
+    <string name="nomeEntretenimentoPlaceholder">Nome…</string>
+    <string name="precoEntretenimentoPlaceholder">Preço…</string>
+    <string name="totalReais">TOTAL:  R$ </string>
+    <string name="custo">CUSTO:</string>
+    <string name="rs">R$</string>
+    <string name="custoTotal">CUSTO TOTAL:</string>
+    <string name="zeroValue">0,00</string>
 </resources>

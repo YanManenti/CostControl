@@ -1,6 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <item type="id" name="loginBtn" />
-    <item type="id" name="criarContaBtn" />
-    <item type="id" name="scrollContainer" />
+    <item name="loginBtn" type="id"  />
+    <item name="criarContaBtn" type="id"  />
+    <item name="scrollContainer" type="id"  />
+    <item name="emailInput" type="id" />
+    <item name="passwordInput" type="id" />
+    <item name="remmemberLoginSwitch" type="id" />
+    <item name="newAccountBtn" type="id" />
+    <item name="resetPasswordBtn" type="id" />
+    <item name="repeatEmailInput" type="id" />
+    <item name="repeatPasswordInput" type="id" />
+    <item name="createAccountBtn" type="id" />
+    <item name="destinoInput" type="id" />
+    <item name="numeroViajantesInput" type="id" />
+    <item name="duracaoDiasInput" type="id" />
+    <item name="combustivelCheckbox" type="id" />
+    <item name="totalQuartosInput" type="id" />
+    <item name="totalNoitesInput" type="id" />
+    <item name="custoMedioNoiteInput" type="id" />
+    <item name="hospedagemCheckbox" type="id" />
+    <item name="refeicoesDiaInput" type="id" />
+    <item name="custoEstimadoRefeicaoInput" type="id" />
+    <item name="refeicoesCheckbox" type="id" />
+    <item name="aluguelVeiculoInput" type="id" />
+    <item name="custoEstimadoPessoaInput" type="id" />
+    <item name="tarifaAereaCheckbox" type="id" />
+    <item name="totalVeiculosInput" type="id" />
+    <item name="custoMedioLitroInput" type="id" />
+    <item name="mediaQuilometrosLitroInput" type="id" />
+    <item name="totalEstimadoQuilometrosInput" type="id" />
+    <item name="salvarBtn" type="id" />
+    <item name="adicionarBtn" type="id" />
+    <item name="criarViagemBtn" type="id" />
+    <item name="custoCombustivel" type="id" />
 </resources>

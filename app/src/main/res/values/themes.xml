@@ -4,6 +4,7 @@
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
         <item name="android:fontFamily">@font/anton</item>
+        <item name="android:letterSpacing">0.012</item>
     </style>
 
     <style name="Theme.CostControl" parent="Base.Theme.CostControl" />

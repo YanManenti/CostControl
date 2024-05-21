@@ -12,7 +12,7 @@
         android:layout_height="match_parent"
         android:background="@color/backgroundBlue"
         android:orientation="vertical"
-        android:padding="30dp"
+        android:padding="20dp"
         tools:ignore="UselessParent">
 
         <TextView
@@ -27,12 +27,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="5dp"
-            android:layout_weight="1">
+            android:layout_weight="1"
+            android:scrollbars="none">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="5dp"
                 android:orientation="vertical">
 
                 <LinearLayout
@@ -53,11 +53,11 @@
                         tools:ignore="UseCompoundDrawables">
 
                         <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:layout_marginTop="1dp"
+                            android:layout_marginEnd="3dp"
                             android:contentDescription="@string/configuracoesgeraisDescription"
-                            android:paddingTop="5dp"
-                            android:paddingEnd="5dp"
                             android:src="@drawable/settings_24px"
                             app:tint="@color/surfaceOrange"
                             tools:ignore="RtlSymmetry" />
@@ -78,6 +78,7 @@
                         tools:ignore="RtlSymmetry" />
 
                     <EditText
+                        android:id="@id/destinoInput"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="5dp"
@@ -95,6 +96,7 @@
                         tools:ignore="RtlSymmetry" />
 
                     <EditText
+                        android:id="@id/numeroViajantesInput"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="5dp"
@@ -112,6 +114,7 @@
                         tools:ignore="RtlSymmetry" />
 
                     <EditText
+                        android:id="@id/duracaoDiasInput"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="5dp"
@@ -136,16 +139,16 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="5dp"
-                        android:gravity="center_vertical"
+                        android:gravity="center_vertical|start"
                         android:orientation="horizontal"
                         tools:ignore="UseCompoundDrawables">
 
                         <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:layout_marginTop="2dp"
+                            android:layout_marginEnd="2dp"
                             android:contentDescription="@string/combustivelDescription"
-                            android:paddingTop="5dp"
-                            android:paddingEnd="5dp"
                             android:src="@drawable/local_gas_station_24px"
                             app:tint="@color/surfaceOrange"
                             tools:ignore="RtlSymmetry" />
@@ -157,7 +160,24 @@
                             android:textColor="@color/surfaceOrange"
                             android:textSize="24sp" />
 
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="end"
+                            >
+                        <com.google.android.material.checkbox.MaterialCheckBox
+                            android:id="@id/combustivelCheckbox"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:layout_marginTop="5dp"
+                            android:scaleX="1.25"
+                            android:scaleY="1.25"
+                            app:buttonTint="@color/surfaceOrange"
+                            />
+                        </LinearLayout>
                     </LinearLayout>
+
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -166,14 +186,16 @@
                         tools:ignore="RtlSymmetry" />
 
                     <EditText
+                        android:id="@id/totalEstimadoQuilometrosInput"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="5dp"
                         android:background="@drawable/custominputbackground"
                         android:hint="@string/totalEstimadoQuilometrosPlaceholder"
-                        android:inputType="number"
+                        android:inputType="numberDecimal"
                         android:padding="10dp"
                         tools:ignore="Autofill" />
+
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -182,14 +204,16 @@
                         tools:ignore="RtlSymmetry" />
 
                     <EditText
+                        android:id="@id/mediaQuilometrosLitroInput"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="5dp"
                         android:background="@drawable/custominputbackground"
                         android:hint="@string/mediaQuilometrosLitroPlaceholder"
-                        android:inputType="number"
+                        android:inputType="numberDecimal"
                         android:padding="10dp"
                         tools:ignore="Autofill" />
+
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -198,14 +222,16 @@
                         tools:ignore="RtlSymmetry" />
 
                     <EditText
+                        android:id="@id/custoMedioLitroInput"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="5dp"
                         android:background="@drawable/custominputbackground"
                         android:hint="@string/custoMedioLitroPlaceholder"
-                        android:inputType="number"
+                        android:inputType="numberDecimal"
                         android:padding="10dp"
                         tools:ignore="Autofill" />
+
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -214,6 +240,7 @@
                         tools:ignore="RtlSymmetry" />
 
                     <EditText
+                        android:id="@id/totalVeiculosInput"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="5dp"
@@ -222,6 +249,42 @@
                         android:inputType="number"
                         android:padding="10dp"
                         tools:ignore="Autofill" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="5dp"
+                        android:gravity="end"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="10dp"
+                            android:text="@string/custo"
+                            android:textAlignment="textEnd"
+                            android:textSize="16sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="5dp"
+                            android:text="@string/rs"
+                            android:textAlignment="textEnd"
+                            android:textColor="@color/surfaceOrange"
+                            android:textSize="16sp" />
+
+                        <TextView
+                            android:id="@id/custoCombustivel"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/zeroValue"
+                            android:textAlignment="textEnd"
+                            android:inputType="numberDecimal"
+                            android:textColor="@color/surfaceOrange"
+                            android:textSize="16sp" />
+
+                    </LinearLayout>
                 </LinearLayout>
 
                 <LinearLayout
@@ -237,24 +300,22 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="5dp"
+                        android:baselineAligned="false"
                         android:orientation="horizontal"
-                        android:weightSum="2"
-                        tools:ignore="UseCompoundDrawables"
-                        android:baselineAligned="false">
+                        tools:ignore="UseCompoundDrawables">
 
                         <LinearLayout
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:layout_weight="1"
                             android:gravity="center_vertical"
                             android:orientation="horizontal">
 
                             <ImageView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
+                                android:layout_width="30dp"
+                                android:layout_height="30dp"
+                                android:layout_marginTop="3dp"
+                                android:layout_marginEnd="5dp"
                                 android:contentDescription="@string/tarifaAereaDescription"
-                                android:paddingTop="5dp"
-                                android:paddingEnd="5dp"
                                 android:src="@drawable/airplane_ticket_24px"
                                 app:tint="@color/surfaceOrange"
                                 tools:ignore="RtlSymmetry" />
@@ -265,32 +326,25 @@
                                 android:text="@string/tarifaAerea"
                                 android:textColor="@color/surfaceOrange"
                                 android:textSize="24sp" />
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:layout_gravity="center_vertical"
-                            android:layout_weight="1"
-                            android:gravity="end"
-                            android:orientation="horizontal">
-
-                            <TextView
-                                android:layout_width="wrap_content"
+                            <LinearLayout
+                                android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_gravity="center_vertical"
-                                android:text="@string/incluir"
-                                android:textColor="@color/surfaceOrange"
-                                android:textSize="16sp" />
-
-                            <CheckBox
-                                android:layout_width="30dp"
-                                android:layout_height="30dp"
-                                android:layout_gravity="center_vertical"
-                                android:checked="false"
-                                app:buttonTint="@color/surfaceOrange" />
+                                android:orientation="horizontal"
+                                android:gravity="end"
+                                >
+                                <com.google.android.material.checkbox.MaterialCheckBox
+                                    android:id="@id/tarifaAereaCheckbox"
+                                    android:layout_width="30dp"
+                                    android:layout_height="30dp"
+                                    android:layout_marginTop="5dp"
+                                    android:scaleX="1.25"
+                                    android:scaleY="1.25"
+                                    app:buttonTint="@color/surfaceOrange"
+                                    />
+                            </LinearLayout>
                         </LinearLayout>
                     </LinearLayout>
+
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -299,14 +353,16 @@
                         tools:ignore="RtlSymmetry" />
 
                     <EditText
+                        android:id="@id/custoEstimadoPessoaInput"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="5dp"
                         android:background="@drawable/custominputbackground"
                         android:hint="@string/custoEstimadoPessoaPlaceholder"
-                        android:inputType="number"
+                        android:inputType="numberDecimal"
                         android:padding="10dp"
                         tools:ignore="Autofill" />
+
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -315,14 +371,49 @@
                         tools:ignore="RtlSymmetry" />
 
                     <EditText
+                        android:id="@id/aluguelVeiculoInput"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="5dp"
                         android:background="@drawable/custominputbackground"
                         android:hint="@string/aluguelVeiculoPlaceholder"
-                        android:inputType="number"
+                        android:inputType="numberDecimal"
                         android:padding="10dp"
                         tools:ignore="Autofill" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="5dp"
+                        android:gravity="end"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="10dp"
+                            android:text="@string/custo"
+                            android:textAlignment="textEnd"
+                            android:textSize="16sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="5dp"
+                            android:text="@string/rs"
+                            android:textAlignment="textEnd"
+                            android:textColor="@color/surfaceOrange"
+                            android:textSize="16sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/zeroValue"
+                            android:textAlignment="textEnd"
+                            android:textColor="@color/surfaceOrange"
+                            android:textSize="16sp" />
+
+                    </LinearLayout>
                 </LinearLayout>
 
                 <LinearLayout
@@ -343,11 +434,10 @@
                         tools:ignore="UseCompoundDrawables">
 
                         <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:layout_marginEnd="5dp"
                             android:contentDescription="@string/refeicoesDescription"
-                            android:paddingTop="5dp"
-                            android:paddingEnd="5dp"
                             android:src="@drawable/fastfood_24px"
                             app:tint="@color/surfaceOrange"
                             tools:ignore="RtlSymmetry" />
@@ -358,7 +448,24 @@
                             android:text="@string/refeicoes"
                             android:textColor="@color/surfaceOrange"
                             android:textSize="24sp" />
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="end"
+                            >
+                            <com.google.android.material.checkbox.MaterialCheckBox
+                                android:id="@id/refeicoesCheckbox"
+                                android:layout_width="30dp"
+                                android:layout_height="30dp"
+                                android:layout_marginTop="5dp"
+                                android:scaleX="1.25"
+                                android:scaleY="1.25"
+                                app:buttonTint="@color/surfaceOrange"
+                                />
+                        </LinearLayout>
                     </LinearLayout>
+
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -367,14 +474,16 @@
                         tools:ignore="RtlSymmetry" />
 
                     <EditText
+                        android:id="@id/custoEstimadoRefeicaoInput"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="5dp"
                         android:background="@drawable/custominputbackground"
                         android:hint="@string/custoEstimadoRefeicaoPlaceholder"
-                        android:inputType="number"
+                        android:inputType="numberDecimal"
                         android:padding="10dp"
                         tools:ignore="Autofill" />
+
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -383,6 +492,7 @@
                         tools:ignore="RtlSymmetry" />
 
                     <EditText
+                        android:id="@id/refeicoesDiaInput"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="5dp"
@@ -391,6 +501,40 @@
                         android:inputType="number"
                         android:padding="10dp"
                         tools:ignore="Autofill" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="5dp"
+                        android:gravity="end"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="10dp"
+                            android:text="@string/custo"
+                            android:textAlignment="textEnd"
+                            android:textSize="16sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="5dp"
+                            android:text="@string/rs"
+                            android:textAlignment="textEnd"
+                            android:textColor="@color/surfaceOrange"
+                            android:textSize="16sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/zeroValue"
+                            android:textAlignment="textEnd"
+                            android:textColor="@color/surfaceOrange"
+                            android:textSize="16sp" />
+
+                    </LinearLayout>
                 </LinearLayout>
 
                 <LinearLayout
@@ -411,11 +555,11 @@
                         tools:ignore="UseCompoundDrawables">
 
                         <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:layout_marginTop="4dp"
+                            android:layout_marginEnd="5dp"
                             android:contentDescription="@string/hospedagemDescription"
-                            android:paddingTop="5dp"
-                            android:paddingEnd="5dp"
                             android:src="@drawable/hotel_24px"
                             app:tint="@color/surfaceOrange"
                             tools:ignore="RtlSymmetry" />
@@ -426,7 +570,24 @@
                             android:text="@string/hospedagem"
                             android:textColor="@color/surfaceOrange"
                             android:textSize="24sp" />
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="end"
+                            >
+                            <com.google.android.material.checkbox.MaterialCheckBox
+                                android:id="@id/hospedagemCheckbox"
+                                android:layout_width="30dp"
+                                android:layout_height="30dp"
+                                android:layout_marginTop="5dp"
+                                android:scaleX="1.25"
+                                android:scaleY="1.25"
+                                app:buttonTint="@color/surfaceOrange"
+                                />
+                        </LinearLayout>
                     </LinearLayout>
+
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -435,14 +596,16 @@
                         tools:ignore="RtlSymmetry" />
 
                     <EditText
+                        android:id="@id/custoMedioNoiteInput"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="5dp"
                         android:background="@drawable/custominputbackground"
                         android:hint="@string/custoMedioNoitePlaceholder"
-                        android:inputType="number"
+                        android:inputType="numberDecimal"
                         android:padding="10dp"
                         tools:ignore="Autofill" />
+
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -451,6 +614,7 @@
                         tools:ignore="RtlSymmetry" />
 
                     <EditText
+                        android:id="@id/totalNoitesInput"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="5dp"
@@ -459,6 +623,7 @@
                         android:inputType="number"
                         android:padding="10dp"
                         tools:ignore="Autofill" />
+
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -467,6 +632,7 @@
                         tools:ignore="RtlSymmetry" />
 
                     <EditText
+                        android:id="@id/totalQuartosInput"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="5dp"
@@ -475,6 +641,40 @@
                         android:inputType="number"
                         android:padding="10dp"
                         tools:ignore="Autofill" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="5dp"
+                        android:gravity="end"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="10dp"
+                            android:text="@string/custo"
+                            android:textAlignment="textEnd"
+                            android:textSize="16sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="5dp"
+                            android:text="@string/rs"
+                            android:textAlignment="textEnd"
+                            android:textColor="@color/surfaceOrange"
+                            android:textSize="16sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/zeroValue"
+                            android:textAlignment="textEnd"
+                            android:textColor="@color/surfaceOrange"
+                            android:textSize="16sp" />
+
+                    </LinearLayout>
                 </LinearLayout>
 
                 <LinearLayout
@@ -492,14 +692,13 @@
                         android:layout_marginBottom="5dp"
                         android:gravity="center_vertical"
                         android:orientation="horizontal"
-                        tools:ignore="UseCompoundDrawables">
+                        tools:ignore="TooManyViews,UseCompoundDrawables">
 
                         <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:layout_marginEnd="2dp"
                             android:contentDescription="@string/entretenimentoDescription"
-                            android:paddingTop="5dp"
-                            android:paddingEnd="5dp"
                             android:src="@drawable/attractions_24px"
                             app:tint="@color/surfaceOrange"
                             tools:ignore="RtlSymmetry" />
@@ -510,74 +709,121 @@
                             android:text="@string/entretenimento"
                             android:textColor="@color/surfaceOrange"
                             android:textSize="24sp" />
+
                     </LinearLayout>
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:gravity="start"
                         android:orientation="horizontal"
-                        android:gravity="end"
-                        android:weightSum="5"
-                        >
+                        android:weightSum="5">
+
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_weight="3"
-                            android:paddingEnd="25dp"
-                            android:text="Nome"
+                            android:paddingStart="5dp"
+                            android:text="@string/nomeEntretenimento"
                             tools:ignore="RtlSymmetry" />
+
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:paddingEnd="33dp"
-                            android:text="Preço"
+                            android:paddingStart="15dp"
+                            android:text="@string/precoEntretenimento"
                             tools:ignore="RtlSymmetry" />
                     </LinearLayout>
+
                     <androidx.appcompat.widget.AppCompatButton
+                        android:id="@id/adicionarBtn"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@drawable/customorangebutton"
-                        android:text="ADICIONAR"
+                        android:text="@string/adicionar"
                         android:textColor="@color/surfaceWhite"
                         android:textSize="20sp"
                         android:textStyle="bold" />
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:weightSum="5"
-                        >
-                        <CheckBox
-                            android:layout_width="30dp"
-                            android:layout_height="30dp"
-                            android:layout_gravity="center_vertical"
-                            android:checked="false"
-                            app:buttonTint="@color/surfaceOrange" />
+                        android:weightSum="5">
+
                         <EditText
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_weight="3"
-                            android:layout_marginBottom="5dp"
-                            android:background="@drawable/custominputbackground"
-                            android:hint="Nome..."
-                            android:inputType="number"
-                            android:padding="10dp"
                             android:layout_marginTop="5dp"
                             android:layout_marginEnd="5dp"
+                            android:layout_marginBottom="5dp"
+                            android:layout_weight="3"
+                            android:background="@drawable/custominputbackground"
+                            android:hint="@string/nomeEntretenimentoPlaceholder"
+                            android:inputType="text"
+                            android:padding="10dp"
                             tools:ignore="Autofill" />
+
                         <EditText
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_weight="2"
-                            android:layout_marginBottom="5dp"
-                            android:background="@drawable/custominputbackground"
-                            android:hint="Preço..."
-                            android:inputType="number"
-                            android:padding="10dp"
                             android:layout_marginTop="5dp"
+                            android:layout_marginBottom="5dp"
+                            android:layout_weight="1.5"
+                            android:background="@drawable/custominputbackground"
+                            android:hint="@string/precoEntretenimentoPlaceholder"
+                            android:inputType="numberDecimal"
+                            android:padding="10dp"
                             tools:ignore="Autofill" />
 
+                        <ImageButton
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_margin="5dp"
+                            android:layout_weight="0.5"
+                            android:background="@drawable/customyellowbutton"
+                            android:contentDescription="@string/excluirviajem"
+                            android:scaleX="1.4"
+                            android:scaleY="1.4"
+                            android:src="@drawable/delete_24px"
+                            app:tint="@color/surfaceOrange" />
                     </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="5dp"
+                        android:gravity="end"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="10dp"
+                            android:text="@string/custo"
+                            android:textAlignment="textEnd"
+                            android:textSize="16sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="5dp"
+                            android:text="@string/rs"
+                            android:textAlignment="textEnd"
+                            android:textColor="@color/surfaceOrange"
+                            android:textSize="16sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/zeroValue"
+                            android:textAlignment="textEnd"
+                            android:textColor="@color/surfaceOrange"
+                            android:textSize="16sp" />
+
+                    </LinearLayout>
+
                 </LinearLayout>
             </LinearLayout>
         </ScrollView>
@@ -592,13 +838,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="5dp"
-                android:orientation="horizontal"
-                android:gravity="end">
+                android:gravity="end"
+                android:orientation="horizontal">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="TOTAL:   R$ "
+                    android:layout_marginEnd="10dp"
+                    android:text="@string/custoTotal"
                     android:textAlignment="textEnd"
                     android:textColor="@color/surfaceWhite"
                     android:textSize="16sp" />
@@ -606,14 +853,24 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="17500,00"
+                    android:layout_marginEnd="5dp"
+                    android:text="@string/rs"
                     android:textAlignment="textEnd"
-                    android:textColor="@color/surfaceWhite"
+                    android:textColor="@color/surfaceOrange"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/zeroValue"
+                    android:textAlignment="textEnd"
+                    android:textColor="@color/surfaceOrange"
                     android:textSize="16sp" />
 
             </LinearLayout>
 
             <androidx.appcompat.widget.AppCompatButton
+                android:id="@id/salvarBtn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/customorangebutton"
