@@ -1,21 +1,33 @@
 package com.example.costcontrol;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.InputType;
+import android.text.Layout;
 import android.text.TextWatcher;
+import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatButton;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.costcontrol.Models.EntretenimentoModel;
 import com.google.android.material.checkbox.MaterialCheckBox;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 public class NewTrip extends AppCompatActivity {
@@ -26,10 +38,13 @@ public class NewTrip extends AppCompatActivity {
             totalNoitesInput, totalQuartosInput;
     TextView custoCombustivel, custoTarifaAerea, custoRefeicoes, custoHospedagem, custoEntretenimento, custoTotal;
     MaterialCheckBox combustivelCheckbox, tarifaAereaCheckbox, refeicoesCheckbox, hospedagemCheckbox;
+    AppCompatButton adicionarBtn;
 
     public float numeroViajantesValue = 0, duracaoDiasValue = 0, totalEstimadoQuilometrosValue = 0,   mediaQuilometrosLitroValue = 0,  custoMedioLitroValue = 0,
             totalVeiculosValue = 0, custoEstimadoPessoaValue = 0,  aluguelVeiculoValue = 0, custoEstimadoRefeicaoValue = 0, refeicoesDiaValue = 0, custoMedioNoiteValue = 0,
-            totalNoitesValue = 0, totalQuartosValue = 0, custoCombustivelValue = 0, custoTarifaAereaValue = 0, custoRefeicoesValue = 0, custoHospedagemValue = 0, custoTotalValue = 0;
+            totalNoitesValue = 0, totalQuartosValue = 0, custoCombustivelValue = 0, custoTarifaAereaValue = 0, custoRefeicoesValue = 0,
+            custoHospedagemValue = 0, custoEntretenimentoValue = 0, custoTotalValue = 0, entretenimentoTemporario = 0;
+    public List<EntretenimentoModel> entretenimentoValues = new ArrayList<>();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -46,8 +61,16 @@ public class NewTrip extends AppCompatActivity {
         tarifaAereaSetup();
         refeicoesSetup();
         hospedagemSetup();
+        entretenimentoSetup(this);
     }
 
+    public String floatToString(Float value){
+        return String.format(Locale.CANADA_FRENCH, "%.2f", value);
+    }
+
+    public int dpToPx(Context context, float dp) {
+        return Math.round(dp * getResources().getDisplayMetrics().density);
+    }
 
     public void inputSetup(){
         destinoInput = findViewById(R.id.destinoInput);
@@ -74,6 +97,7 @@ public class NewTrip extends AppCompatActivity {
         refeicoesCheckbox = findViewById(R.id.refeicoesCheckbox);
         hospedagemCheckbox = findViewById(R.id.hospedagemCheckbox);
         custoTotal = findViewById(R.id.custoTotal);
+        adicionarBtn = findViewById(R.id.adicionarBtn);
     }
 
     public void configuracoesGeraisSetup(){
@@ -223,12 +247,6 @@ public class NewTrip extends AppCompatActivity {
         }
         custoCombustivelValue = result;
         custoCombustivel.setText(floatToString(result));
-    }
-
-
-
-    public String floatToString(Float value){
-        return String.format(Locale.CANADA_FRENCH, "%.2f", value);
     }
 
     public void tarifaAereaSetup(){
@@ -434,4 +452,128 @@ public class NewTrip extends AppCompatActivity {
         custoHospedagemValue = result;
         custoHospedagem.setText(floatToString(result));
     };
+
+    public void entretenimentoSetup(Context context){
+
+
+        adicionarBtn.setOnClickListener(v -> {
+            createEntretenimentoElement(context);
+        });
+    }
+
+    List<EntretenimentoModel> teste = new ArrayList<>();
+
+    public void createEntretenimentoElement(Context context){
+        LinearLayout entretenimentoLayout;
+        EditText entretenimentoNome, entretenimentoValor;
+        ImageButton deleteBtn;
+        LinearLayout parent = findViewById(R.id.entretenimentoContainer);
+        EntretenimentoModel current = new EntretenimentoModel();
+
+
+        teste.add(current);
+
+
+        entretenimentoLayout = new LinearLayout(context);
+        entretenimentoNome = new EditText(context);
+        entretenimentoValor = new EditText(context);
+        deleteBtn = new ImageButton(context);
+
+        entretenimentoLayout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        entretenimentoLayout.setOrientation(LinearLayout.HORIZONTAL);
+        entretenimentoLayout.setWeightSum(5);
+
+        LinearLayout.LayoutParams nomeParams = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 3f);
+        nomeParams.setMargins(dpToPx(context,5), dpToPx(context,5), dpToPx(context,5), dpToPx(context,5));
+        entretenimentoNome.setLayoutParams(nomeParams);
+        entretenimentoNome.setBackgroundResource(R.drawable.custominputbackground);
+        entretenimentoNome.setHint(R.string.nomeEntretenimentoPlaceholder);
+        entretenimentoNome.setInputType(InputType.TYPE_CLASS_TEXT);
+        entretenimentoNome.setPadding(dpToPx(context,10), dpToPx(context,10), dpToPx(context,10), dpToPx(context,10));
+        entretenimentoNome.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if(s.length() == 0){
+                    current.nome = "";
+                    return;
+                }
+                current.nome = s.toString();
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        LinearLayout.LayoutParams valorParams = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1.5f);
+        valorParams.setMargins(dpToPx(context,0), dpToPx(context,5), dpToPx(context,0), dpToPx(context,5));
+        entretenimentoValor.setLayoutParams(valorParams);
+        entretenimentoValor.setBackgroundResource(R.drawable.custominputbackground);
+        entretenimentoValor.setHint(R.string.precoEntretenimentoPlaceholder);
+        entretenimentoValor.setInputType(InputType.TYPE_CLASS_NUMBER);
+        entretenimentoValor.setPadding(dpToPx(context,10), dpToPx(context,10), dpToPx(context,10), dpToPx(context,10));
+        entretenimentoValor.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if(s.length() == 0){
+                    current.preco = 0;
+                    return;
+                }
+                current.preco = Float.parseFloat(s.toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                updateEntretenimento();
+            }
+        });
+
+        LinearLayout.LayoutParams deleteParams = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 0.5f);
+        deleteParams.setMargins(dpToPx(context,5), dpToPx(context,5), dpToPx(context,5), dpToPx(context,5));
+        deleteBtn.setLayoutParams(deleteParams);
+        deleteBtn.setBackgroundResource(R.drawable.customyellowbutton);
+        deleteBtn.setScaleX(1.4f);
+        deleteBtn.setScaleY(1.4f);
+        deleteBtn.setImageResource(R.drawable.delete_24px);
+        deleteBtn.setColorFilter(ContextCompat.getColor(context,R.color.surfaceOrange));
+
+        deleteBtn.setOnClickListener(v -> {
+            teste.remove(current);
+            updateEntretenimento();
+            parent.removeView(entretenimentoLayout);
+        });
+
+        parent.addView(entretenimentoLayout);
+        entretenimentoLayout.addView(entretenimentoNome);
+        entretenimentoLayout.addView(entretenimentoValor);
+        entretenimentoLayout.addView(deleteBtn);
+
+    }
+
+    public  void updateEntretenimento(){
+        float result=0;
+        for (EntretenimentoModel current: teste) {
+            result+=current.preco;
+        }
+        if(result > entretenimentoTemporario){
+            custoTotalValue+=(result-entretenimentoTemporario);
+        }else{
+            custoTotalValue-=(entretenimentoTemporario-result);
+        }
+        entretenimentoTemporario=result;
+        custoEntretenimento.setText(floatToString(result));
+        custoTotal.setText(floatToString(custoTotalValue));
+    }
+
 }

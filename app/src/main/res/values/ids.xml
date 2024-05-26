@@ -38,4 +38,5 @@
     <item name="custoHospedagem" type="id" />
     <item name="custoEntretenimento" type="id" />
     <item name="custoTotal" type="id" />
+    <item name="entretenimentoContainer" type="id" />
 </resources>
