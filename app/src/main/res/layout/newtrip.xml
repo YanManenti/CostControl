@@ -406,6 +406,7 @@
                             android:textSize="16sp" />
 
                         <TextView
+                            android:id="@id/custoTarifaAerea"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/zeroValue"
@@ -527,6 +528,7 @@
                             android:textSize="16sp" />
 
                         <TextView
+                            android:id="@id/custoRefeicoes"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/zeroValue"
@@ -667,6 +669,7 @@
                             android:textSize="16sp" />
 
                         <TextView
+                            android:id="@id/custoHospedagem"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/zeroValue"
@@ -815,6 +818,7 @@
                             android:textSize="16sp" />
 
                         <TextView
+                            android:id="@id/custoEntretenimento"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/zeroValue"
@@ -860,6 +864,7 @@
                     android:textSize="16sp" />
 
                 <TextView
+                    android:id="@id/custoTotal"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/zeroValue"
