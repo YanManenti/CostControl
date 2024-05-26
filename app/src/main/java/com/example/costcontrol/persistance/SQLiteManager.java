@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.example.costcontrol.persistance.models.Entreteinment;
 import com.example.costcontrol.persistance.models.Trip;
 import com.example.costcontrol.persistance.models.User;
 
@@ -65,8 +66,20 @@ public class SQLiteManager extends SQLiteOpenHelper {
 
         String createUserTableQuery = userSb.toString();
 
+        StringBuilder entreteinmentSb = new StringBuilder();
+        entreteinmentSb.append("CREATE TABLE Entreteinment (")
+                .append("id INTEGER PRIMARY KEY AUTOINCREMENT, ")
+                .append("name TEXT, ")
+                .append("price REAL, ")
+                .append("tripId INTEGER, ")
+                .append("FOREIGN KEY(tripId) REFERENCES Trip(id)")
+                .append(");");
+
+        String createEntreteinmentTableQuery = entreteinmentSb.toString();
+
         db.execSQL(createTripTableQuery);
         db.execSQL(createUserTableQuery);
+        db.execSQL(createEntreteinmentTableQuery);
     }
 
     @Override
@@ -138,6 +151,18 @@ public class SQLiteManager extends SQLiteOpenHelper {
         sqLiteDatabase.insert("User", null, contentValues);
     }
 
+    public void addEntreteinmentToDatabase(Entreteinment entreteinment) {
+        SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
+
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("name", entreteinment.getName());
+        contentValues.put("price", entreteinment.getPrice());
+        contentValues.put("tripId", entreteinment.getTripId());
+
+        sqLiteDatabase.insert("Entreteinment", null, contentValues);
+    }
+
+
     public Trip getTripById(Integer id) {
         SQLiteDatabase sqLiteDatabase = this.getReadableDatabase();
 
@@ -194,7 +219,7 @@ public class SQLiteManager extends SQLiteOpenHelper {
         }
     }
 
-    public List<Trip> getTripsByUserId(Integer userId) {
+    public List<Trip> listTripsByUserId(Integer userId) {
         SQLiteDatabase sqLiteDatabase = this.getReadableDatabase();
 
         String[] columns = {
@@ -250,7 +275,7 @@ public class SQLiteManager extends SQLiteOpenHelper {
     }
 
 
-    public User getUserEmail(String email) {
+    public User getUserByEmail(String email) {
         SQLiteDatabase sqLiteDatabase = this.getReadableDatabase();
 
         String[] columns = {
@@ -285,5 +310,50 @@ public class SQLiteManager extends SQLiteOpenHelper {
             return null;
         }
     }
+
+    public List<Entreteinment> getEntreteinmentByTripId(Integer tripId) {
+        SQLiteDatabase sqLiteDatabase = this.getReadableDatabase();
+
+        String[] columns = {
+                "id", "name", "price", "tripId"
+        };
+
+        String selection = "tripId = ?";
+        String[] selectionArgs = {tripId.toString()};
+
+        Cursor cursor = sqLiteDatabase.query(
+                "Entreteinment",
+                columns,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                null
+        );
+
+        List<Entreteinment> entreteinments = new ArrayList<>();
+        if (cursor != null) {
+            while (cursor.moveToNext()) {
+                Entreteinment entreteinment = new Entreteinment();
+                entreteinment.setId(cursor.getInt(cursor.getColumnIndexOrThrow("id")));
+                entreteinment.setName(cursor.getString(cursor.getColumnIndexOrThrow("name")));
+                entreteinment.setPrice(cursor.getFloat(cursor.getColumnIndexOrThrow("price")));
+                entreteinment.setTripId(cursor.getInt(cursor.getColumnIndexOrThrow("tripId")));
+                entreteinments.add(entreteinment);
+            }
+            cursor.close();
+        }
+        return entreteinments;
+    }
+    public void deleteTripById(int tripId) {
+        SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
+        sqLiteDatabase.delete("Trip", "id = ?", new String[]{String.valueOf(tripId)});
+    }
+
+    public void deleteEntreteinmentById(int entreteinmentId) {
+        SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
+        sqLiteDatabase.delete("Entreteinment", "id = ?", new String[]{String.valueOf(entreteinmentId)});
+    }
+
 
 }
