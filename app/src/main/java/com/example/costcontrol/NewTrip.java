@@ -550,16 +550,12 @@ public class NewTrip extends AppCompatActivity {
         });
     }
 
-    ;
-
     public void updateHospedagem() {
         float result;
         result = (custoMedioNoiteValue * totalNoitesValue) * totalQuartosValue;
         custoHospedagemValue = result;
         custoHospedagem.setText(floatToString(result));
     }
-
-    ;
 
     public void entretenimentoSetup(Context context) {
 

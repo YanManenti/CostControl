@@ -35,8 +35,6 @@ public class Trips extends AppCompatActivity {
             return insets;
         });
 
-        SQLiteManager sqLiteManager = SQLiteManager.instanceOfDatabase(this);
-
         container = findViewById(R.id.scrollContainer);
 
         Bundle extras = getIntent().getExtras();

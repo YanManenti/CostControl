@@ -46,7 +46,6 @@ public class NewAccountActivity extends AppCompatActivity {
             try {
                 if (emailInput.getText().toString().equals(repeatEmailInput.getText().toString())) {
                     if (passwordInput.getText().toString().equals(repeatPasswordInput.getText().toString())) {
-                        //Chechar dados com o banco
                         String email = emailInput.getText().toString();
                         String password = passwordInput.getText().toString();
 
