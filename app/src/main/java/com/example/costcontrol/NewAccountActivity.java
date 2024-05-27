@@ -12,6 +12,10 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.costcontrol.Utils.SharedPreferences;
+import com.example.costcontrol.persistance.SQLiteManager;
+import com.example.costcontrol.persistance.models.User;
+
 public class NewAccountActivity extends AppCompatActivity {
 
     EditText emailInput, repeatEmailInput, passwordInput, repeatPasswordInput;
@@ -28,6 +32,8 @@ public class NewAccountActivity extends AppCompatActivity {
             return insets;
         });
 
+        SQLiteManager sqLiteManager = SQLiteManager.instanceOfDatabase(this);
+
         emailInput = findViewById(R.id.emailInput);
         repeatEmailInput = findViewById(R.id.repeatEmailInput);
         passwordInput = findViewById(R.id.passwordInput);
@@ -38,10 +44,22 @@ public class NewAccountActivity extends AppCompatActivity {
         //Leva para Trips caso a criação da conta retorne sucesso
         createAccountBtn.setOnClickListener(v -> {
             try {
-                if (emailInput.getText().equals(repeatEmailInput.getText())) {
-                    if (passwordInput.getText().equals(repeatPasswordInput.getText())) {
+                if (emailInput.getText().toString().equals(repeatEmailInput.getText().toString())) {
+                    if (passwordInput.getText().toString().equals(repeatPasswordInput.getText().toString())) {
                         //Chechar dados com o banco
-                        startActivity(new Intent(this, Trips.class));
+                        String email = emailInput.getText().toString();
+                        String password = passwordInput.getText().toString();
+
+                        User user = new User(email, password);
+                        sqLiteManager.addUserToDatabase(user);
+
+                        SharedPreferences sp = new SharedPreferences();
+                        user = sqLiteManager.getUserByEmail(email);
+                        sp.SPWrite(user.getEmail(), user.getPassword(),this);
+
+                        Intent intent = new Intent(this, Trips.class);
+                        intent.putExtra("userId", user.getId());
+                        startActivity(intent);
                     } else {
                         Toast.makeText(getBaseContext(), "As senhas são diferentes.", Toast.LENGTH_LONG).show();
                     }

@@ -87,7 +87,7 @@ public class SQLiteManager extends SQLiteOpenHelper {
         // Handle database upgrade if needed
     }
 
-    public void addTripToDatabase(Trip trip) {
+    public Trip addTripToDatabase(Trip trip) {
         SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
 
         ContentValues contentValues = new ContentValues();
@@ -111,7 +111,9 @@ public class SQLiteManager extends SQLiteOpenHelper {
         contentValues.put("refeicoesDia", trip.getRefeicoesDia());
         contentValues.put("hospedagem", trip.getHospedagem());
 
-        sqLiteDatabase.insert("Trip", null, contentValues);
+        long id = sqLiteDatabase.insert("Trip", null, contentValues);
+        trip.setId((int) id);
+        return trip;
     }
 
     public void updateTrip(Trip trip) {
@@ -311,7 +313,7 @@ public class SQLiteManager extends SQLiteOpenHelper {
         }
     }
 
-    public List<Entreteinment> getEntreteinmentByTripId(Integer tripId) {
+    public List<Entreteinment> listEntreteinmentByTripId(Integer tripId) {
         SQLiteDatabase sqLiteDatabase = this.getReadableDatabase();
 
         String[] columns = {

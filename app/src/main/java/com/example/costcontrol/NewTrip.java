@@ -2,6 +2,7 @@ package com.example.costcontrol;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputType;
@@ -23,6 +24,9 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.costcontrol.Models.EntretenimentoModel;
+import com.example.costcontrol.persistance.SQLiteManager;
+import com.example.costcontrol.persistance.models.Entreteinment;
+import com.example.costcontrol.persistance.models.Trip;
 import com.google.android.material.checkbox.MaterialCheckBox;
 
 import java.math.BigDecimal;
@@ -38,13 +42,16 @@ public class NewTrip extends AppCompatActivity {
             totalNoitesInput, totalQuartosInput;
     TextView custoCombustivel, custoTarifaAerea, custoRefeicoes, custoHospedagem, custoEntretenimento, custoTotal;
     MaterialCheckBox combustivelCheckbox, tarifaAereaCheckbox, refeicoesCheckbox, hospedagemCheckbox;
-    AppCompatButton adicionarBtn;
+    AppCompatButton adicionarBtn, salvarBtn;
+    Integer userId;
 
-    public float numeroViajantesValue = 0, duracaoDiasValue = 0, totalEstimadoQuilometrosValue = 0,   mediaQuilometrosLitroValue = 0,  custoMedioLitroValue = 0,
-            totalVeiculosValue = 0, custoEstimadoPessoaValue = 0,  aluguelVeiculoValue = 0, custoEstimadoRefeicaoValue = 0, refeicoesDiaValue = 0, custoMedioNoiteValue = 0,
-            totalNoitesValue = 0, totalQuartosValue = 0, custoCombustivelValue = 0, custoTarifaAereaValue = 0, custoRefeicoesValue = 0,
-            custoHospedagemValue = 0, custoEntretenimentoValue = 0, custoTotalValue = 0, entretenimentoTemporario = 0;
-    public List<EntretenimentoModel> entretenimentoValues = new ArrayList<>();
+    public float totalEstimadoQuilometrosValue = 0, mediaQuilometrosLitroValue = 0, custoMedioLitroValue = 0,
+            custoEstimadoPessoaValue = 0, aluguelVeiculoValue = 0, custoEstimadoRefeicaoValue = 0, custoMedioNoiteValue = 0,
+            custoCombustivelValue = 0, custoTarifaAereaValue = 0, custoRefeicoesValue = 0,
+            custoHospedagemValue = 0, custoTotalValue = 0, entretenimentoTemporario = 0;
+
+    public Integer numeroViajantesValue = 0, duracaoDiasValue = 0, totalVeiculosValue = 0, totalNoitesValue = 0, totalQuartosValue = 0, refeicoesDiaValue = 0;
+    public List<Entreteinment> entretenimentoValues = new ArrayList<>();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -55,6 +62,10 @@ public class NewTrip extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+
+        SQLiteManager sqLiteManager = SQLiteManager.instanceOfDatabase(this);
+
         inputSetup();
         configuracoesGeraisSetup();
         combustivelSetup();
@@ -62,9 +73,86 @@ public class NewTrip extends AppCompatActivity {
         refeicoesSetup();
         hospedagemSetup();
         entretenimentoSetup(this);
+
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            int extraUserId = extras.getInt("userId");
+            Integer extraTripId = extras.getInt("tripId");
+            userId = extraUserId;
+            if (extraTripId != 0) {
+                Trip currentTrip = sqLiteManager.getTripById(extraTripId);
+                entretenimentoValues = sqLiteManager.listEntreteinmentByTripId(extraTripId);
+
+                destinoInput.setText(currentTrip.destino);
+                numeroViajantesInput.setText(currentTrip.numeroViajantes.toString());
+                duracaoDiasInput.setText(currentTrip.duracaoDias.toString());
+                totalEstimadoQuilometrosInput.setText(currentTrip.totalEstimadoQuilometros.toString());
+                mediaQuilometrosLitroInput.setText(currentTrip.mediaQuilometrosLitro.toString());
+                custoMedioLitroInput.setText(currentTrip.custoMedioLitro.toString());
+                totalVeiculosInput.setText(currentTrip.totalVeiculos.toString());
+                custoEstimadoPessoaInput.setText(currentTrip.custoEstimadoPessoa.toString());
+                aluguelVeiculoInput.setText(currentTrip.aluguelVeiculo.toString());
+                custoEstimadoRefeicaoInput.setText(currentTrip.custoEstimadoRefeicao.toString());
+                refeicoesDiaInput.setText(currentTrip.refeicoesDia.toString());
+                custoMedioNoiteInput.setText(currentTrip.custoMedioNoite.toString());
+                totalNoitesInput.setText(currentTrip.totalNoites.toString());
+                totalQuartosInput.setText(currentTrip.totalQuartos.toString());
+                combustivelCheckbox.setChecked(currentTrip.combustivel);
+                tarifaAereaCheckbox.setChecked(currentTrip.tarifaAerea);
+                refeicoesCheckbox.setChecked(currentTrip.refeicoes);
+                hospedagemCheckbox.setChecked(currentTrip.refeicoes);
+                for (Entreteinment entreteinment : entretenimentoValues) {
+                    createEntretenimentoElement(this, entreteinment);
+                }
+                updateHospedagem();
+                updateRefeicoes();
+                updateCombustivel();
+                updateTarifaAerea();
+                updateEntretenimento();
+
+                salvarBtn.setText(R.string.atualizar);
+                salvarBtn.setOnClickListener(v -> {
+                    Trip newTrip = new Trip(null, destinoInput.getText().toString(), numeroViajantesValue,
+                            duracaoDiasValue, combustivelCheckbox.isChecked(), totalEstimadoQuilometrosValue,
+                            mediaQuilometrosLitroValue, custoMedioLitroValue, totalVeiculosValue, custoMedioNoiteValue,
+                            totalNoitesValue, totalQuartosValue, userId, tarifaAereaCheckbox.isChecked(),
+                            custoEstimadoPessoaValue, aluguelVeiculoValue, refeicoesCheckbox.isChecked(),
+                            custoEstimadoRefeicaoValue, refeicoesDiaValue, hospedagemCheckbox.isChecked());
+                    sqLiteManager.updateTrip(newTrip);
+                    List<Entreteinment> currentEntreteinment = sqLiteManager.listEntreteinmentByTripId(extraTripId);
+                    for (Entreteinment entretenimento : currentEntreteinment) {
+                        sqLiteManager.deleteEntreteinmentById(entretenimento.getId());
+                    }
+                    for (Entreteinment entretenimento : entretenimentoValues) {
+                        entretenimento.setTripId(extraTripId);
+                        sqLiteManager.addEntreteinmentToDatabase(entretenimento);
+                    }
+                    startActivity(new Intent(this, Trips.class));
+                });
+                return;
+            }
+        }
+        salvarBtn.setText(R.string.salvar);
+        salvarBtn.setOnClickListener(v -> {
+            Trip newTrip = new Trip(null, destinoInput.getText().toString(), numeroViajantesValue,
+                    duracaoDiasValue, combustivelCheckbox.isChecked(), totalEstimadoQuilometrosValue,
+                    mediaQuilometrosLitroValue, custoMedioLitroValue, totalVeiculosValue, custoMedioNoiteValue,
+                    totalNoitesValue, totalQuartosValue, userId, tarifaAereaCheckbox.isChecked(),
+                    custoEstimadoPessoaValue, aluguelVeiculoValue, refeicoesCheckbox.isChecked(),
+                    custoEstimadoRefeicaoValue, refeicoesDiaValue, hospedagemCheckbox.isChecked());
+            Trip result = sqLiteManager.addTripToDatabase(newTrip);
+
+            for (Entreteinment entretenimento : entretenimentoValues) {
+                entretenimento.setTripId(result.getId());
+                sqLiteManager.addEntreteinmentToDatabase(entretenimento);
+            }
+            startActivity(new Intent(this, Trips.class));
+
+        });
+
     }
 
-    public String floatToString(Float value){
+    public String floatToString(Float value) {
         return String.format(Locale.CANADA_FRENCH, "%.2f", value);
     }
 
@@ -72,7 +160,7 @@ public class NewTrip extends AppCompatActivity {
         return Math.round(dp * getResources().getDisplayMetrics().density);
     }
 
-    public void inputSetup(){
+    public void inputSetup() {
         destinoInput = findViewById(R.id.destinoInput);
         numeroViajantesInput = findViewById(R.id.numeroViajantesInput);
         duracaoDiasInput = findViewById(R.id.duracaoDiasInput);
@@ -98,9 +186,10 @@ public class NewTrip extends AppCompatActivity {
         hospedagemCheckbox = findViewById(R.id.hospedagemCheckbox);
         custoTotal = findViewById(R.id.custoTotal);
         adicionarBtn = findViewById(R.id.adicionarBtn);
+        salvarBtn = findViewById(R.id.salvarBtn);
     }
 
-    public void configuracoesGeraisSetup(){
+    public void configuracoesGeraisSetup() {
         numeroViajantesInput.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -109,7 +198,7 @@ public class NewTrip extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(s.length() == 0){
+                if (s.length() == 0) {
                     numeroViajantesValue = 0;
                     return;
                 }
@@ -130,7 +219,7 @@ public class NewTrip extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(s.length() == 0){
+                if (s.length() == 0) {
                     duracaoDiasValue = 0;
                     return;
                 }
@@ -144,7 +233,7 @@ public class NewTrip extends AppCompatActivity {
         });
     }
 
-    public void combustivelSetup(){
+    public void combustivelSetup() {
         totalEstimadoQuilometrosInput.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -153,7 +242,7 @@ public class NewTrip extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(s.length() == 0){
+                if (s.length() == 0) {
                     totalEstimadoQuilometrosValue = 0;
                     return;
                 }
@@ -174,7 +263,7 @@ public class NewTrip extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(s.length() == 0){
+                if (s.length() == 0) {
                     mediaQuilometrosLitroValue = 0;
                     return;
                 }
@@ -195,7 +284,7 @@ public class NewTrip extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(s.length() == 0){
+                if (s.length() == 0) {
                     custoMedioLitroValue = 0;
                     return;
                 }
@@ -216,7 +305,7 @@ public class NewTrip extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(s.length() == 0){
+                if (s.length() == 0) {
                     totalVeiculosValue = 0;
                     return;
                 }
@@ -230,26 +319,26 @@ public class NewTrip extends AppCompatActivity {
         });
 
         combustivelCheckbox.addOnCheckedStateChangedListener((materialCheckBox, i) -> {
-            if(materialCheckBox.isChecked()){
+            if (materialCheckBox.isChecked()) {
                 custoTotalValue += custoCombustivelValue;
                 custoTotal.setText(floatToString(custoTotalValue));
-            }else{
-                custoTotalValue-=custoCombustivelValue;
+            } else {
+                custoTotalValue -= custoCombustivelValue;
                 custoTotal.setText(floatToString(custoTotalValue));
             }
         });
     }
 
-    public void updateCombustivel(){
+    public void updateCombustivel() {
         float result = 0;
-        if(mediaQuilometrosLitroValue!=0 && totalVeiculosValue!=0){
-            result = ((totalEstimadoQuilometrosValue/mediaQuilometrosLitroValue)*custoMedioLitroValue)/totalVeiculosValue;
+        if (mediaQuilometrosLitroValue != 0 && totalVeiculosValue != 0) {
+            result = ((totalEstimadoQuilometrosValue / mediaQuilometrosLitroValue) * custoMedioLitroValue) / totalVeiculosValue;
         }
         custoCombustivelValue = result;
         custoCombustivel.setText(floatToString(result));
     }
 
-    public void tarifaAereaSetup(){
+    public void tarifaAereaSetup() {
         custoEstimadoPessoaInput.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -258,7 +347,7 @@ public class NewTrip extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(s.length() == 0){
+                if (s.length() == 0) {
                     custoEstimadoPessoaValue = 0;
                     return;
                 }
@@ -279,7 +368,7 @@ public class NewTrip extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(s.length() == 0){
+                if (s.length() == 0) {
                     aluguelVeiculoValue = 0;
                     return;
                 }
@@ -293,24 +382,24 @@ public class NewTrip extends AppCompatActivity {
         });
 
         tarifaAereaCheckbox.addOnCheckedStateChangedListener((materialCheckBox, i) -> {
-            if(materialCheckBox.isChecked()){
+            if (materialCheckBox.isChecked()) {
                 custoTotalValue += custoTarifaAereaValue;
                 custoTotal.setText(floatToString(custoTotalValue));
-            }else{
-                custoTotalValue-=custoTarifaAereaValue;
+            } else {
+                custoTotalValue -= custoTarifaAereaValue;
                 custoTotal.setText(floatToString(custoTotalValue));
             }
         });
     }
 
-    public void updateTarifaAerea(){
+    public void updateTarifaAerea() {
         float result = 0;
-        result = (custoEstimadoPessoaValue*numeroViajantesValue) + aluguelVeiculoValue;
+        result = (custoEstimadoPessoaValue * numeroViajantesValue) + aluguelVeiculoValue;
         custoTarifaAereaValue = result;
         custoTarifaAerea.setText(floatToString(result));
     }
 
-    public void refeicoesSetup(){
+    public void refeicoesSetup() {
         custoEstimadoRefeicaoInput.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -319,7 +408,7 @@ public class NewTrip extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(s.length() == 0){
+                if (s.length() == 0) {
                     custoEstimadoRefeicaoValue = 0;
                     return;
                 }
@@ -340,7 +429,7 @@ public class NewTrip extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(s.length() == 0){
+                if (s.length() == 0) {
                     refeicoesDiaValue = 0;
                     return;
                 }
@@ -354,24 +443,24 @@ public class NewTrip extends AppCompatActivity {
         });
 
         refeicoesCheckbox.addOnCheckedStateChangedListener((materialCheckBox, i) -> {
-            if(materialCheckBox.isChecked()){
+            if (materialCheckBox.isChecked()) {
                 custoTotalValue += custoRefeicoesValue;
                 custoTotal.setText(floatToString(custoTotalValue));
-            }else{
-                custoTotalValue-=custoRefeicoesValue;
+            } else {
+                custoTotalValue -= custoRefeicoesValue;
                 custoTotal.setText(floatToString(custoTotalValue));
             }
         });
     }
 
-    public void updateRefeicoes(){
+    public void updateRefeicoes() {
         float result;
-        result = ((refeicoesDiaValue*numeroViajantesValue)*custoEstimadoRefeicaoValue)*duracaoDiasValue;
+        result = ((refeicoesDiaValue * numeroViajantesValue) * custoEstimadoRefeicaoValue) * duracaoDiasValue;
         custoRefeicoesValue = result;
         custoRefeicoes.setText(floatToString(result));
     }
 
-    public void hospedagemSetup(){
+    public void hospedagemSetup() {
         custoMedioNoiteInput.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -380,7 +469,7 @@ public class NewTrip extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(s.length() == 0){
+                if (s.length() == 0) {
                     custoMedioNoiteValue = 0;
                     return;
                 }
@@ -401,7 +490,7 @@ public class NewTrip extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(s.length() == 0){
+                if (s.length() == 0) {
                     totalNoitesValue = 0;
                     return;
                 }
@@ -422,7 +511,7 @@ public class NewTrip extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(s.length() == 0){
+                if (s.length() == 0) {
                     totalQuartosValue = 0;
                     return;
                 }
@@ -436,42 +525,40 @@ public class NewTrip extends AppCompatActivity {
         });
 
         hospedagemCheckbox.addOnCheckedStateChangedListener((materialCheckBox, i) -> {
-            if(materialCheckBox.isChecked()){
+            if (materialCheckBox.isChecked()) {
                 custoTotalValue += custoHospedagemValue;
                 custoTotal.setText(floatToString(custoTotalValue));
-            }else{
-                custoTotalValue-=custoHospedagemValue;
+            } else {
+                custoTotalValue -= custoHospedagemValue;
                 custoTotal.setText(floatToString(custoTotalValue));
             }
         });
-    };
+    }
 
-    public void updateHospedagem(){
+    ;
+
+    public void updateHospedagem() {
         float result;
-        result = (custoMedioNoiteValue*totalNoitesValue)*totalQuartosValue;
+        result = (custoMedioNoiteValue * totalNoitesValue) * totalQuartosValue;
         custoHospedagemValue = result;
         custoHospedagem.setText(floatToString(result));
-    };
+    }
 
-    public void entretenimentoSetup(Context context){
+    ;
+
+    public void entretenimentoSetup(Context context) {
 
 
         adicionarBtn.setOnClickListener(v -> {
-            createEntretenimentoElement(context);
+            createEntretenimentoElement(context, new Entreteinment());
         });
     }
 
-    List<EntretenimentoModel> teste = new ArrayList<>();
-
-    public void createEntretenimentoElement(Context context){
+    public void createEntretenimentoElement(Context context, Entreteinment entreteinment) {
         LinearLayout entretenimentoLayout;
         EditText entretenimentoNome, entretenimentoValor;
         ImageButton deleteBtn;
         LinearLayout parent = findViewById(R.id.entretenimentoContainer);
-        EntretenimentoModel current = new EntretenimentoModel();
-
-
-        teste.add(current);
 
 
         entretenimentoLayout = new LinearLayout(context);
@@ -484,12 +571,12 @@ public class NewTrip extends AppCompatActivity {
         entretenimentoLayout.setWeightSum(5);
 
         LinearLayout.LayoutParams nomeParams = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 3f);
-        nomeParams.setMargins(dpToPx(context,5), dpToPx(context,5), dpToPx(context,5), dpToPx(context,5));
+        nomeParams.setMargins(dpToPx(context, 5), dpToPx(context, 5), dpToPx(context, 5), dpToPx(context, 5));
         entretenimentoNome.setLayoutParams(nomeParams);
         entretenimentoNome.setBackgroundResource(R.drawable.custominputbackground);
         entretenimentoNome.setHint(R.string.nomeEntretenimentoPlaceholder);
         entretenimentoNome.setInputType(InputType.TYPE_CLASS_TEXT);
-        entretenimentoNome.setPadding(dpToPx(context,10), dpToPx(context,10), dpToPx(context,10), dpToPx(context,10));
+        entretenimentoNome.setPadding(dpToPx(context, 10), dpToPx(context, 10), dpToPx(context, 10), dpToPx(context, 10));
         entretenimentoNome.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -498,26 +585,25 @@ public class NewTrip extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(s.length() == 0){
-                    current.nome = "";
+                if (s.length() == 0) {
+                    entreteinment.setName("");
                     return;
                 }
-                current.nome = s.toString();
+                entreteinment.setName(s.toString());
             }
 
             @Override
             public void afterTextChanged(Editable s) {
-
             }
         });
 
         LinearLayout.LayoutParams valorParams = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1.5f);
-        valorParams.setMargins(dpToPx(context,0), dpToPx(context,5), dpToPx(context,0), dpToPx(context,5));
+        valorParams.setMargins(dpToPx(context, 0), dpToPx(context, 5), dpToPx(context, 0), dpToPx(context, 5));
         entretenimentoValor.setLayoutParams(valorParams);
         entretenimentoValor.setBackgroundResource(R.drawable.custominputbackground);
         entretenimentoValor.setHint(R.string.precoEntretenimentoPlaceholder);
-        entretenimentoValor.setInputType(InputType.TYPE_CLASS_NUMBER);
-        entretenimentoValor.setPadding(dpToPx(context,10), dpToPx(context,10), dpToPx(context,10), dpToPx(context,10));
+        entretenimentoValor.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+        entretenimentoValor.setPadding(dpToPx(context, 10), dpToPx(context, 10), dpToPx(context, 10), dpToPx(context, 10));
         entretenimentoValor.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -526,11 +612,11 @@ public class NewTrip extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(s.length() == 0){
-                    current.preco = 0;
+                if (s.length() == 0) {
+                    entreteinment.setPrice(0f);
                     return;
                 }
-                current.preco = Float.parseFloat(s.toString());
+                entreteinment.setPrice(Float.parseFloat(s.toString()));
             }
 
             @Override
@@ -540,40 +626,79 @@ public class NewTrip extends AppCompatActivity {
         });
 
         LinearLayout.LayoutParams deleteParams = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 0.5f);
-        deleteParams.setMargins(dpToPx(context,5), dpToPx(context,5), dpToPx(context,5), dpToPx(context,5));
+        deleteParams.setMargins(dpToPx(context, 5), dpToPx(context, 5), dpToPx(context, 5), dpToPx(context, 5));
         deleteBtn.setLayoutParams(deleteParams);
         deleteBtn.setBackgroundResource(R.drawable.customyellowbutton);
         deleteBtn.setScaleX(1.4f);
         deleteBtn.setScaleY(1.4f);
         deleteBtn.setImageResource(R.drawable.delete_24px);
-        deleteBtn.setColorFilter(ContextCompat.getColor(context,R.color.surfaceOrange));
+        deleteBtn.setColorFilter(ContextCompat.getColor(context, R.color.surfaceOrange));
 
         deleteBtn.setOnClickListener(v -> {
-            teste.remove(current);
+            entretenimentoValues.remove(entreteinment);
             updateEntretenimento();
             parent.removeView(entretenimentoLayout);
         });
+
+        if (entreteinment.getName() != null) {
+            entretenimentoNome.setText(entreteinment.getName());
+        }
+        if (entreteinment.getPrice() != null) {
+
+            entretenimentoValor.setText(entreteinment.getPrice().toString());
+        }
+
 
         parent.addView(entretenimentoLayout);
         entretenimentoLayout.addView(entretenimentoNome);
         entretenimentoLayout.addView(entretenimentoValor);
         entretenimentoLayout.addView(deleteBtn);
 
+        if (!entretenimentoValues.contains(entreteinment)) {
+            entretenimentoValues.add(entreteinment);
+        }
+
     }
 
-    public  void updateEntretenimento(){
-        float result=0;
-        for (EntretenimentoModel current: teste) {
-            result+=current.preco;
+    public void updateEntretenimento() {
+        Float result = 0f;
+        for (Entreteinment current : entretenimentoValues) {
+            result += current.getPrice();
         }
-        if(result > entretenimentoTemporario){
-            custoTotalValue+=(result-entretenimentoTemporario);
-        }else{
-            custoTotalValue-=(entretenimentoTemporario-result);
+        if (result > entretenimentoTemporario) {
+            custoTotalValue += (result - entretenimentoTemporario);
+        } else {
+            custoTotalValue -= (entretenimentoTemporario - result);
         }
-        entretenimentoTemporario=result;
+        entretenimentoTemporario = result;
         custoEntretenimento.setText(floatToString(result));
         custoTotal.setText(floatToString(custoTotalValue));
     }
+
+//    public float calculoTotal(Boolean hospedagem, Boolean refeicoes, Boolean tarifaAerea, Boolean combustivel,
+//                              float custoMedioNoiteValue, Integer totalNoitesValue, Integer totalQuartosValue,
+//                              Integer refeicoesDiaValue, Integer numeroViajantesValue, float custoEstimadoRefeicaoValue,
+//                              Integer duracaoDiasValue, float custoEstimadoPessoaValue, float aluguelVeiculoValue,
+//                              float mediaQuilometrosLitroValue, Integer totalVeiculosValue, float totalEstimadoQuilometrosValue,
+//                              float custoMedioLitroValue, List<Entreteinment> entretenimentoValues){
+//        float result = 0;
+//        if(hospedagem){
+//            result += (custoMedioNoiteValue*totalNoitesValue)*totalQuartosValue;
+//        }
+//        if(refeicoes){
+//            result += ((refeicoesDiaValue*numeroViajantesValue)*custoEstimadoRefeicaoValue)*duracaoDiasValue;
+//        }
+//        if(tarifaAerea){
+//            result += (custoEstimadoPessoaValue*numeroViajantesValue) + aluguelVeiculoValue;
+//        }
+//
+//        if(combustivel && mediaQuilometrosLitroValue!=0 && totalVeiculosValue!=0){
+//            result = ((totalEstimadoQuilometrosValue/mediaQuilometrosLitroValue)*custoMedioLitroValue)/totalVeiculosValue;
+//        }
+//        for (Entreteinment current: entretenimentoValues) {
+//            result+=current.getPrice();
+//        }
+//        return result;
+//    }
 
 }

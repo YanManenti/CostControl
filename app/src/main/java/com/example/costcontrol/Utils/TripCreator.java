@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.ContextWrapper;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.PorterDuff;
 import android.graphics.Typeface;
@@ -17,7 +18,11 @@ import android.widget.Toast;
 import androidx.core.content.ContextCompat;
 
 import com.example.costcontrol.Models.TripModel;
+import com.example.costcontrol.NewTrip;
 import com.example.costcontrol.R;
+import com.example.costcontrol.persistance.SQLiteManager;
+import com.example.costcontrol.persistance.models.Entreteinment;
+import com.example.costcontrol.persistance.models.Trip;
 
 import java.util.List;
 
@@ -29,10 +34,12 @@ public class TripCreator {
     }
 
     @SuppressLint("SetTextI18n")
-    public TripCreator(LinearLayout basicView, Context context, List<TripModel> list) {
+    public TripCreator(LinearLayout basicView, Context context, List<Trip> list, Integer userId) {
+
+        SQLiteManager sqLiteManager = SQLiteManager.instanceOfDatabase(context);
         resources = basicView.getResources();
         int dp;
-        for (TripModel trip :  list) {
+        for (Trip trip :  list) {
 
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
             layoutParams.setMargins(0, 0, 0, 5);
@@ -103,7 +110,10 @@ public class TripCreator {
             configBtn.setColorFilter(ContextCompat.getColor(context,R.color.surfaceOrange));
             configBtn.setContentDescription(resources.getText(R.string.editarviajem));
             configBtn.setOnClickListener(v -> {
-                Toast.makeText(v.getContext(), "configBtn CLICK", Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(v.getContext(), NewTrip.class);
+                intent.putExtra("tripId", trip.id);
+                intent.putExtra("userId", userId);
+                v.getContext().startActivity(intent);
             });
 
             LinearLayout bottomWrapper = new LinearLayout(context);
@@ -139,7 +149,11 @@ public class TripCreator {
 
             TextView precoTotalValue = new TextView(context);
             precoTotalValue.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT));
-            precoTotalValue.setText("R$ "+"000");
+            List<Entreteinment> current = sqLiteManager.listEntreteinmentByTripId(trip.id);
+            precoTotalValue.setText("R$ "+calculoTotal(trip.hospedagem, trip.refeicoes, trip.tarifaAerea, trip.combustivel, trip.custoMedioNoite,
+                    trip.totalNoites, trip.totalQuartos, trip.refeicoesDia, trip.numeroViajantes, trip.custoEstimadoRefeicao, trip.duracaoDias,
+                    trip.custoEstimadoPessoa, trip.aluguelVeiculo, trip.mediaQuilometrosLitro, trip.totalVeiculos, trip.totalEstimadoQuilometros,
+                    trip.custoMedioLitro,current));
             precoTotalValue.setTextColor(resources.getColor(R.color.surfaceOrange, context.getTheme()));
             precoTotalValue.setTextSize(26);
             precoTotalValue.setTypeface(precoTotalValue.getTypeface(), Typeface.BOLD);
@@ -153,9 +167,9 @@ public class TripCreator {
             deleteBtn.setColorFilter(ContextCompat.getColor(context,R.color.surfaceOrange));
             deleteBtn.setContentDescription(resources.getText(R.string.excluirviajem));
             deleteBtn.setOnClickListener(v -> {
-                //deletes from the database then reloades page
-                Toast.makeText(v.getContext(), "deleteBtn CLICK", Toast.LENGTH_LONG).show();
-                getActivity(context).recreate();//??????????????????????????????????????????????
+                sqLiteManager.deleteTripById(trip.id);
+                basicView.removeAllViews();
+                new TripCreator(basicView, context, sqLiteManager.listTripsByUserId(userId), userId);
             });
 
 
@@ -184,24 +198,29 @@ public class TripCreator {
 
     }
 
-    public Activity getActivity(Context context)
-    {
-        if (context == null)
-        {
-            return null;
+    public float calculoTotal(Boolean hospedagem, Boolean refeicoes, Boolean tarifaAerea, Boolean combustivel,
+                              float custoMedioNoiteValue, Integer totalNoitesValue, Integer totalQuartosValue,
+                              Integer refeicoesDiaValue, Integer numeroViajantesValue, float custoEstimadoRefeicaoValue,
+                              Integer duracaoDiasValue, float custoEstimadoPessoaValue, float aluguelVeiculoValue,
+                              float mediaQuilometrosLitroValue, Integer totalVeiculosValue, float totalEstimadoQuilometrosValue,
+                              float custoMedioLitroValue, List<Entreteinment> entretenimentoValues){
+        float result = 0;
+        if(hospedagem){
+            result += (custoMedioNoiteValue*totalNoitesValue)*totalQuartosValue;
         }
-        else if (context instanceof ContextWrapper)
-        {
-            if (context instanceof Activity)
-            {
-                return (Activity) context;
-            }
-            else
-            {
-                return getActivity(((ContextWrapper) context).getBaseContext());
-            }
+        if(refeicoes){
+            result += ((refeicoesDiaValue*numeroViajantesValue)*custoEstimadoRefeicaoValue)*duracaoDiasValue;
+        }
+        if(tarifaAerea){
+            result += (custoEstimadoPessoaValue*numeroViajantesValue) + aluguelVeiculoValue;
         }
 
-        return null;
+        if(combustivel && mediaQuilometrosLitroValue!=0 && totalVeiculosValue!=0){
+            result += ((totalEstimadoQuilometrosValue/mediaQuilometrosLitroValue)*custoMedioLitroValue)/totalVeiculosValue;
+        }
+        for (Entreteinment current: entretenimentoValues) {
+            result+=current.getPrice();
+        }
+        return result;
     }
 }
