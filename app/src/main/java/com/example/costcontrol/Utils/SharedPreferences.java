@@ -28,8 +28,8 @@ public class SharedPreferences {
 
         name = sharedPref.getString(keyName, null);
         password = sharedPref.getString(keyPassword, null);
-        values.add(name);
-        values.add(password);
+        values.add(0,name);
+        values.add(1,password);
 
         return values;
     }

@@ -33,4 +33,10 @@
     <item name="adicionarBtn" type="id" />
     <item name="criarViagemBtn" type="id" />
     <item name="custoCombustivel" type="id" />
+    <item name="custoTarifaAerea" type="id" />
+    <item name="custoRefeicoes" type="id" />
+    <item name="custoHospedagem" type="id" />
+    <item name="custoEntretenimento" type="id" />
+    <item name="custoTotal" type="id" />
+    <item name="entretenimentoContainer" type="id" />
 </resources>

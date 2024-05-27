@@ -406,6 +406,7 @@
                             android:textSize="16sp" />
 
                         <TextView
+                            android:id="@id/custoTarifaAerea"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/zeroValue"
@@ -527,6 +528,7 @@
                             android:textSize="16sp" />
 
                         <TextView
+                            android:id="@id/custoRefeicoes"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/zeroValue"
@@ -667,6 +669,7 @@
                             android:textSize="16sp" />
 
                         <TextView
+                            android:id="@id/custoHospedagem"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/zeroValue"
@@ -735,6 +738,13 @@
                             android:text="@string/precoEntretenimento"
                             tools:ignore="RtlSymmetry" />
                     </LinearLayout>
+                    <LinearLayout
+                        android:id="@id/entretenimentoContainer"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                    </LinearLayout>
 
                     <androidx.appcompat.widget.AppCompatButton
                         android:id="@id/adicionarBtn"
@@ -745,50 +755,6 @@
                         android:textColor="@color/surfaceWhite"
                         android:textSize="20sp"
                         android:textStyle="bold" />
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:weightSum="5">
-
-                        <EditText
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="5dp"
-                            android:layout_marginEnd="5dp"
-                            android:layout_marginBottom="5dp"
-                            android:layout_weight="3"
-                            android:background="@drawable/custominputbackground"
-                            android:hint="@string/nomeEntretenimentoPlaceholder"
-                            android:inputType="text"
-                            android:padding="10dp"
-                            tools:ignore="Autofill" />
-
-                        <EditText
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="5dp"
-                            android:layout_marginBottom="5dp"
-                            android:layout_weight="1.5"
-                            android:background="@drawable/custominputbackground"
-                            android:hint="@string/precoEntretenimentoPlaceholder"
-                            android:inputType="numberDecimal"
-                            android:padding="10dp"
-                            tools:ignore="Autofill" />
-
-                        <ImageButton
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_margin="5dp"
-                            android:layout_weight="0.5"
-                            android:background="@drawable/customyellowbutton"
-                            android:contentDescription="@string/excluirviajem"
-                            android:scaleX="1.4"
-                            android:scaleY="1.4"
-                            android:src="@drawable/delete_24px"
-                            app:tint="@color/surfaceOrange" />
-                    </LinearLayout>
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -815,6 +781,7 @@
                             android:textSize="16sp" />
 
                         <TextView
+                            android:id="@id/custoEntretenimento"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/zeroValue"
@@ -860,6 +827,7 @@
                     android:textSize="16sp" />
 
                 <TextView
+                    android:id="@id/custoTotal"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/zeroValue"

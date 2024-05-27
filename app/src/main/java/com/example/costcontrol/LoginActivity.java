@@ -17,6 +17,8 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.costcontrol.Utils.SharedPreferences;
+import com.example.costcontrol.persistance.SQLiteManager;
+import com.example.costcontrol.persistance.models.User;
 
 import java.util.List;
 
@@ -40,6 +42,9 @@ public class LoginActivity extends AppCompatActivity {
             return insets;
         });
 
+        SQLiteManager sqLiteManager = SQLiteManager.instanceOfDatabase(this);
+
+
         emailInput = findViewById(R.id.emailInput);
         passwordInput = findViewById(R.id.passwordInput);
         loginBtn = findViewById(R.id.loginBtn);
@@ -47,33 +52,47 @@ public class LoginActivity extends AppCompatActivity {
         resetPasswordBtn = findViewById(R.id.resetPasswordBtn);
         remmemberLoginSwitch = findViewById(R.id.remmemberLoginSwitch);
 
-        //Código para Toast
-        //Toast.makeText(getBaseContext(), "This is my Toast message!",Toast.LENGTH_LONG).show();
-
-        //fazer a verificação do sharedpreferences aqui
         try {
+            //If it comes from NewAccountActivity
+            Bundle extras = getIntent().getExtras();
+            if (extras != null) {
+                String email = extras.getString("userEmail");
+                User user = sqLiteManager.getUserByEmail(email);
+                sp.SPWrite(user.getEmail(), user.getPassword(), this);
+            }
+            //Natural flow
             List<String> stored = sp.SPRead(this);
             if (stored.get(0) != null) {
-                startActivity(new Intent(this, Trips.class));
+                User user = Login(stored.get(0), stored.get(1));
+                Intent intent = new Intent(this, Trips.class);
+                intent.putExtra("userId", user.getId());
+                startActivity(intent);
             }
 
         } catch (Exception e) {
             Toast.makeText(getBaseContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+            e.printStackTrace();
         }
 
 
         loginBtn.setOnClickListener(v -> {
             try {
-                //fazer o login no banco
-                //caso erro jogar excessão
-                //se logar continuar normalmente
-                if (remmemberLoginSwitch.isChecked()) {
-                    //guardar em sharedpreferences
-                    sp.SPWrite(emailInput.getText().toString(), passwordInput.getText().toString(), this);
+                User user = Login(emailInput.getText().toString(), passwordInput.getText().toString());
+                if(user==null){
+                    Toast.makeText(getBaseContext(), "Usuário não encontrado.", Toast.LENGTH_LONG).show();
+                    return;
                 }
-                startActivity(new Intent(this, Trips.class));
+                if (remmemberLoginSwitch.isChecked()) {
+                    sp.SPWrite(user.getEmail(), user.getPassword(), this);
+                }else{
+                    sp.SPWrite(null, null, this);
+                }
+                Intent intent = new Intent(this, Trips.class);
+                intent.putExtra("userId", user.getId());
+                startActivity(intent);
             } catch (Exception e) {
-                Toast.makeText(getBaseContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(getBaseContext(), "Erro ao fazer login.", Toast.LENGTH_LONG).show();
+                e.printStackTrace();
             }
         });
 
@@ -87,5 +106,16 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
+    public User Login(String email, String password){
+        SQLiteManager sqLiteManager = SQLiteManager.instanceOfDatabase(this);
+        User user;
+        user = sqLiteManager.getUserByEmail(email);
+        if(!user.getPassword().equals(password)){
+            Toast.makeText(getBaseContext(), "Senha ou email errado.", Toast.LENGTH_LONG).show();
+            passwordInput.setText("");
+            return null;
+        }
+        return user;
+    }
 
 }
