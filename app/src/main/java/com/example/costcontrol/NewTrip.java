@@ -82,21 +82,39 @@ public class NewTrip extends AppCompatActivity {
             if (extraTripId != 0) {
                 Trip currentTrip = sqLiteManager.getTripById(extraTripId);
                 entretenimentoValues = sqLiteManager.listEntreteinmentByTripId(extraTripId);
+                updateHospedagem();
+                updateRefeicoes();
+                updateCombustivel();
+                updateTarifaAerea();
+                updateEntretenimento();
 
                 destinoInput.setText(currentTrip.destino);
                 numeroViajantesInput.setText(currentTrip.numeroViajantes.toString());
+                numeroViajantesValue = currentTrip.numeroViajantes;
                 duracaoDiasInput.setText(currentTrip.duracaoDias.toString());
+                duracaoDiasValue = currentTrip.duracaoDias;
                 totalEstimadoQuilometrosInput.setText(currentTrip.totalEstimadoQuilometros.toString());
+                totalEstimadoQuilometrosValue = currentTrip.totalEstimadoQuilometros;
                 mediaQuilometrosLitroInput.setText(currentTrip.mediaQuilometrosLitro.toString());
+                mediaQuilometrosLitroValue = currentTrip.mediaQuilometrosLitro;
                 custoMedioLitroInput.setText(currentTrip.custoMedioLitro.toString());
+                custoMedioLitroValue = currentTrip.custoMedioLitro;
                 totalVeiculosInput.setText(currentTrip.totalVeiculos.toString());
+                totalVeiculosValue = currentTrip.totalVeiculos;
                 custoEstimadoPessoaInput.setText(currentTrip.custoEstimadoPessoa.toString());
+                custoEstimadoPessoaValue = currentTrip.custoEstimadoPessoa;
                 aluguelVeiculoInput.setText(currentTrip.aluguelVeiculo.toString());
+                aluguelVeiculoValue = currentTrip.aluguelVeiculo;
                 custoEstimadoRefeicaoInput.setText(currentTrip.custoEstimadoRefeicao.toString());
+                custoEstimadoRefeicaoValue = currentTrip.custoEstimadoRefeicao;
                 refeicoesDiaInput.setText(currentTrip.refeicoesDia.toString());
+                refeicoesDiaValue = currentTrip.refeicoesDia;
                 custoMedioNoiteInput.setText(currentTrip.custoMedioNoite.toString());
+                custoMedioNoiteValue = currentTrip.custoMedioNoite;
                 totalNoitesInput.setText(currentTrip.totalNoites.toString());
+                totalNoitesValue = currentTrip.totalNoites;
                 totalQuartosInput.setText(currentTrip.totalQuartos.toString());
+                totalQuartosValue = currentTrip.totalQuartos;
                 combustivelCheckbox.setChecked(currentTrip.combustivel);
                 tarifaAereaCheckbox.setChecked(currentTrip.tarifaAerea);
                 refeicoesCheckbox.setChecked(currentTrip.refeicoes);
@@ -104,15 +122,10 @@ public class NewTrip extends AppCompatActivity {
                 for (Entreteinment entreteinment : entretenimentoValues) {
                     createEntretenimentoElement(this, entreteinment);
                 }
-                updateHospedagem();
-                updateRefeicoes();
-                updateCombustivel();
-                updateTarifaAerea();
-                updateEntretenimento();
 
                 salvarBtn.setText(R.string.atualizar);
                 salvarBtn.setOnClickListener(v -> {
-                    Trip newTrip = new Trip(null, destinoInput.getText().toString(), numeroViajantesValue,
+                    Trip newTrip = new Trip(extraTripId, destinoInput.getText().toString(), numeroViajantesValue,
                             duracaoDiasValue, combustivelCheckbox.isChecked(), totalEstimadoQuilometrosValue,
                             mediaQuilometrosLitroValue, custoMedioLitroValue, totalVeiculosValue, custoMedioNoiteValue,
                             totalNoitesValue, totalQuartosValue, userId, tarifaAereaCheckbox.isChecked(),
@@ -146,7 +159,9 @@ public class NewTrip extends AppCompatActivity {
                 entretenimento.setTripId(result.getId());
                 sqLiteManager.addEntreteinmentToDatabase(entretenimento);
             }
-            startActivity(new Intent(this, Trips.class));
+            Intent intent = new Intent(this, Trips.class);
+            intent.putExtra("userId", userId);
+            startActivity(intent);
 
         });
 
@@ -156,7 +171,7 @@ public class NewTrip extends AppCompatActivity {
         return String.format(Locale.CANADA_FRENCH, "%.2f", value);
     }
 
-    public int dpToPx(Context context, float dp) {
+    public int dpToPx(float dp) {
         return Math.round(dp * getResources().getDisplayMetrics().density);
     }
 
@@ -237,7 +252,7 @@ public class NewTrip extends AppCompatActivity {
         totalEstimadoQuilometrosInput.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
+                combustivelCheckbox.setChecked(false);
             }
 
             @Override
@@ -258,7 +273,7 @@ public class NewTrip extends AppCompatActivity {
         mediaQuilometrosLitroInput.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
+                combustivelCheckbox.setChecked(false);
             }
 
             @Override
@@ -279,7 +294,7 @@ public class NewTrip extends AppCompatActivity {
         custoMedioLitroInput.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
+                combustivelCheckbox.setChecked(false);
             }
 
             @Override
@@ -300,7 +315,7 @@ public class NewTrip extends AppCompatActivity {
         totalVeiculosInput.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
+                combustivelCheckbox.setChecked(false);
             }
 
             @Override
@@ -342,7 +357,7 @@ public class NewTrip extends AppCompatActivity {
         custoEstimadoPessoaInput.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
+                tarifaAereaCheckbox.setChecked(false);
             }
 
             @Override
@@ -363,7 +378,7 @@ public class NewTrip extends AppCompatActivity {
         aluguelVeiculoInput.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
+                tarifaAereaCheckbox.setChecked(false);
             }
 
             @Override
@@ -403,7 +418,7 @@ public class NewTrip extends AppCompatActivity {
         custoEstimadoRefeicaoInput.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
+                refeicoesCheckbox.setChecked(false);
             }
 
             @Override
@@ -424,7 +439,7 @@ public class NewTrip extends AppCompatActivity {
         refeicoesDiaInput.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
+                refeicoesCheckbox.setChecked(false);
             }
 
             @Override
@@ -464,7 +479,7 @@ public class NewTrip extends AppCompatActivity {
         custoMedioNoiteInput.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
+                hospedagemCheckbox.setChecked(false);
             }
 
             @Override
@@ -485,7 +500,7 @@ public class NewTrip extends AppCompatActivity {
         totalNoitesInput.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
+                hospedagemCheckbox.setChecked(false);
             }
 
             @Override
@@ -506,7 +521,7 @@ public class NewTrip extends AppCompatActivity {
         totalQuartosInput.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
+                hospedagemCheckbox.setChecked(false);
             }
 
             @Override
@@ -571,12 +586,12 @@ public class NewTrip extends AppCompatActivity {
         entretenimentoLayout.setWeightSum(5);
 
         LinearLayout.LayoutParams nomeParams = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 3f);
-        nomeParams.setMargins(dpToPx(context, 5), dpToPx(context, 5), dpToPx(context, 5), dpToPx(context, 5));
+        nomeParams.setMargins(dpToPx(5), dpToPx(5), dpToPx(5), dpToPx(5));
         entretenimentoNome.setLayoutParams(nomeParams);
         entretenimentoNome.setBackgroundResource(R.drawable.custominputbackground);
         entretenimentoNome.setHint(R.string.nomeEntretenimentoPlaceholder);
         entretenimentoNome.setInputType(InputType.TYPE_CLASS_TEXT);
-        entretenimentoNome.setPadding(dpToPx(context, 10), dpToPx(context, 10), dpToPx(context, 10), dpToPx(context, 10));
+        entretenimentoNome.setPadding(dpToPx(10), dpToPx(10), dpToPx(10), dpToPx(10));
         entretenimentoNome.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -598,12 +613,12 @@ public class NewTrip extends AppCompatActivity {
         });
 
         LinearLayout.LayoutParams valorParams = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1.5f);
-        valorParams.setMargins(dpToPx(context, 0), dpToPx(context, 5), dpToPx(context, 0), dpToPx(context, 5));
+        valorParams.setMargins(dpToPx(0), dpToPx(5), dpToPx(0), dpToPx(5));
         entretenimentoValor.setLayoutParams(valorParams);
         entretenimentoValor.setBackgroundResource(R.drawable.custominputbackground);
         entretenimentoValor.setHint(R.string.precoEntretenimentoPlaceholder);
         entretenimentoValor.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
-        entretenimentoValor.setPadding(dpToPx(context, 10), dpToPx(context, 10), dpToPx(context, 10), dpToPx(context, 10));
+        entretenimentoValor.setPadding(dpToPx(10), dpToPx(10), dpToPx(10), dpToPx(10));
         entretenimentoValor.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -626,7 +641,7 @@ public class NewTrip extends AppCompatActivity {
         });
 
         LinearLayout.LayoutParams deleteParams = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 0.5f);
-        deleteParams.setMargins(dpToPx(context, 5), dpToPx(context, 5), dpToPx(context, 5), dpToPx(context, 5));
+        deleteParams.setMargins(dpToPx(5), dpToPx(5), dpToPx(5), dpToPx(5));
         deleteBtn.setLayoutParams(deleteParams);
         deleteBtn.setBackgroundResource(R.drawable.customyellowbutton);
         deleteBtn.setScaleX(1.4f);

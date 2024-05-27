@@ -53,12 +53,8 @@ public class NewAccountActivity extends AppCompatActivity {
                         User user = new User(email, password);
                         sqLiteManager.addUserToDatabase(user);
 
-                        SharedPreferences sp = new SharedPreferences();
-                        user = sqLiteManager.getUserByEmail(email);
-                        sp.SPWrite(user.getEmail(), user.getPassword(),this);
-
-                        Intent intent = new Intent(this, Trips.class);
-                        intent.putExtra("userId", user.getId());
+                        Intent intent = new Intent(this, LoginActivity.class);
+                        intent.putExtra("userEmail", user.getEmail());
                         startActivity(intent);
                     } else {
                         Toast.makeText(getBaseContext(), "As senhas são diferentes.", Toast.LENGTH_LONG).show();

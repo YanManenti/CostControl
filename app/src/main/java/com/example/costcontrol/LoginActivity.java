@@ -42,6 +42,8 @@ public class LoginActivity extends AppCompatActivity {
             return insets;
         });
 
+        SQLiteManager sqLiteManager = SQLiteManager.instanceOfDatabase(this);
+
 
         emailInput = findViewById(R.id.emailInput);
         passwordInput = findViewById(R.id.passwordInput);
@@ -51,6 +53,14 @@ public class LoginActivity extends AppCompatActivity {
         remmemberLoginSwitch = findViewById(R.id.remmemberLoginSwitch);
 
         try {
+            //If it comes from NewAccountActivity
+            Bundle extras = getIntent().getExtras();
+            if (extras != null) {
+                String email = extras.getString("userEmail");
+                User user = sqLiteManager.getUserByEmail(email);
+                sp.SPWrite(user.getEmail(), user.getPassword(), this);
+            }
+            //Natural flow
             List<String> stored = sp.SPRead(this);
             if (stored.get(0) != null) {
                 User user = Login(stored.get(0), stored.get(1));
@@ -74,10 +84,14 @@ public class LoginActivity extends AppCompatActivity {
                 }
                 if (remmemberLoginSwitch.isChecked()) {
                     sp.SPWrite(user.getEmail(), user.getPassword(), this);
+                }else{
+                    sp.SPWrite(null, null, this);
                 }
-                startActivity(new Intent(this, Trips.class));
+                Intent intent = new Intent(this, Trips.class);
+                intent.putExtra("userId", user.getId());
+                startActivity(intent);
             } catch (Exception e) {
-                Toast.makeText(getBaseContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(getBaseContext(), "Erro ao fazer login.", Toast.LENGTH_LONG).show();
                 e.printStackTrace();
             }
         });

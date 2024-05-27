@@ -34,9 +34,10 @@ public class TripCreator {
     }
 
     @SuppressLint("SetTextI18n")
-    public TripCreator(LinearLayout basicView, Context context, List<Trip> list, Integer userId) {
+    public TripCreator(LinearLayout basicView, Context context, Integer userId) {
 
         SQLiteManager sqLiteManager = SQLiteManager.instanceOfDatabase(context);
+        List<Trip> list = sqLiteManager.listTripsByUserId(userId);
         resources = basicView.getResources();
         int dp;
         for (Trip trip :  list) {
@@ -94,7 +95,7 @@ public class TripCreator {
 
             TextView precoPessoaValue = new TextView(context);
             precoPessoaValue.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT));
-            precoPessoaValue.setText("R$ "+trip.custoEstimadoPessoa);
+            precoPessoaValue.setText("R$ "+trip.getCustoEstimadoPessoa());
             precoPessoaValue.setTextColor(resources.getColor(R.color.surfaceOrange, context.getTheme()));
             precoPessoaValue.setTextSize(26);
             precoPessoaValue.setTypeface(precoPessoaValue.getTypeface(), Typeface.BOLD);
@@ -169,7 +170,7 @@ public class TripCreator {
             deleteBtn.setOnClickListener(v -> {
                 sqLiteManager.deleteTripById(trip.id);
                 basicView.removeAllViews();
-                new TripCreator(basicView, context, sqLiteManager.listTripsByUserId(userId), userId);
+                new TripCreator(basicView, context, userId);
             });
 
 

@@ -46,8 +46,7 @@ public class Trips extends AppCompatActivity {
                 startActivity(new Intent(this, LoginActivity.class));
             }
             userId=value;
-            List<Trip> userTrips = sqLiteManager.listTripsByUserId(value);
-            new TripCreator(container, this, userTrips, value);
+            new TripCreator(container, this, value);
         }else{
             startActivity(new Intent(this, LoginActivity.class));
         }
