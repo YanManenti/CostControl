@@ -12,6 +12,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.costcontrol.Utils.ExtraActivity;
 import com.example.costcontrol.Utils.SharedPreferences;
 import com.example.costcontrol.persistance.SQLiteManager;
 import com.example.costcontrol.persistance.models.User;
@@ -52,16 +53,20 @@ public class NewAccountActivity extends AppCompatActivity {
                         User user = new User(email, password);
                         sqLiteManager.addUserToDatabase(user);
 
-                        Intent intent = new Intent(this, LoginActivity.class);
-                        intent.putExtra("userEmail", user.getEmail());
-                        startActivity(intent);
+//                        Intent intent = new Intent(this, LoginActivity.class);
+//                        intent.putExtra("userEmail", user.getEmail());
+//                        startActivity(intent);
+                        ExtraActivity.start(this, () -> {
+                            Intent intent = new Intent(this, LoginActivity.class);
+                            return ExtraActivity.setUserEmail(intent, user.getEmail());
+                        });
                     } else {
                         Toast.makeText(getBaseContext(), "As senhas são diferentes.", Toast.LENGTH_LONG).show();
                     }
                 } else {
                     Toast.makeText(getBaseContext(), "Os emails são diferentes.", Toast.LENGTH_LONG).show();
                 }
-            } catch (Error e) {
+            } catch (Error | Exception e) {
                 Toast.makeText(getBaseContext(), e.getMessage(), Toast.LENGTH_LONG).show();
             }
         });

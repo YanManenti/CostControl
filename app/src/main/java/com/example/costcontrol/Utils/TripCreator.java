@@ -29,19 +29,18 @@ import java.util.List;
 public class TripCreator {
     Resources resources;
 
-    public int dpToPx(Context context, float dp) {
+    public static int dpToPx( Resources resources,float dp) {
         return Math.round(dp * resources.getDisplayMetrics().density);
     }
 
     @SuppressLint("SetTextI18n")
-    public TripCreator(LinearLayout basicView, Context context, Integer userId) {
+    public static void render(LinearLayout basicView,Resources resources, Context context, Integer userId) {
 
         SQLiteManager sqLiteManager = SQLiteManager.instanceOfDatabase(context);
         List<Trip> list = sqLiteManager.listTripsByUserId(userId);
-        resources = basicView.getResources();
+//        resources = basicView.getResources();
         int dp;
         for (Trip trip :  list) {
-
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
             layoutParams.setMargins(0, 0, 0, 5);
             LinearLayout linearLayout = new LinearLayout(context);
@@ -49,7 +48,7 @@ public class TripCreator {
             linearLayout.setBackgroundResource(R.drawable.customyellowbutton);
             linearLayout.setBaselineAligned(false);
             linearLayout.setOrientation(LinearLayout.VERTICAL);
-            dp = dpToPx(context, 15);
+            dp = dpToPx(resources, 15);
             linearLayout.setPadding(dp, dp, dp, dp);
             linearLayout.setWeightSum(2);
 
@@ -111,10 +110,15 @@ public class TripCreator {
             configBtn.setColorFilter(ContextCompat.getColor(context,R.color.surfaceOrange));
             configBtn.setContentDescription(resources.getText(R.string.editarviajem));
             configBtn.setOnClickListener(v -> {
-                Intent intent = new Intent(v.getContext(), NewTrip.class);
-                intent.putExtra("tripId", trip.id);
-                intent.putExtra("userId", userId);
-                v.getContext().startActivity(intent);
+//                Intent intent = new Intent(v.getContext(), NewTrip.class);
+//                intent.putExtra("tripId", trip.id);
+//                intent.putExtra("userId", userId);
+//                v.getContext().startActivity(intent);
+                ExtraActivity.start(v.getContext(), () -> {
+                    Intent intent = new Intent(v.getContext(), NewTrip.class);
+                    ExtraActivity.setUserId(intent, userId);
+                    return ExtraActivity.setTripId(intent, trip.id);
+                });
             });
 
             LinearLayout bottomWrapper = new LinearLayout(context);
@@ -151,7 +155,7 @@ public class TripCreator {
             TextView precoTotalValue = new TextView(context);
             precoTotalValue.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT));
             List<Entreteinment> current = sqLiteManager.listEntreteinmentByTripId(trip.id);
-            precoTotalValue.setText("R$ "+calculoTotal(trip.hospedagem, trip.refeicoes, trip.tarifaAerea, trip.combustivel, trip.custoMedioNoite,
+            precoTotalValue.setText("R$ "+ calculoTotal(trip.hospedagem, trip.refeicoes, trip.tarifaAerea, trip.combustivel, trip.custoMedioNoite,
                     trip.totalNoites, trip.totalQuartos, trip.refeicoesDia, trip.numeroViajantes, trip.custoEstimadoRefeicao, trip.duracaoDias,
                     trip.custoEstimadoPessoa, trip.aluguelVeiculo, trip.mediaQuilometrosLitro, trip.totalVeiculos, trip.totalEstimadoQuilometros,
                     trip.custoMedioLitro,current));
@@ -170,7 +174,7 @@ public class TripCreator {
             deleteBtn.setOnClickListener(v -> {
                 sqLiteManager.deleteTripById(trip.id);
                 basicView.removeAllViews();
-                new TripCreator(basicView, context, userId);
+                TripCreator.render(basicView,resources, context, userId);
             });
 
 
@@ -199,7 +203,7 @@ public class TripCreator {
 
     }
 
-    public float calculoTotal(Boolean hospedagem, Boolean refeicoes, Boolean tarifaAerea, Boolean combustivel,
+    public static float calculoTotal(Boolean hospedagem, Boolean refeicoes, Boolean tarifaAerea, Boolean combustivel,
                               float custoMedioNoiteValue, Integer totalNoitesValue, Integer totalQuartosValue,
                               Integer refeicoesDiaValue, Integer numeroViajantesValue, float custoEstimadoRefeicaoValue,
                               Integer duracaoDiasValue, float custoEstimadoPessoaValue, float aluguelVeiculoValue,

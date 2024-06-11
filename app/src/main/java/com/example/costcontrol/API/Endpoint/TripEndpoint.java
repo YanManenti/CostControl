@@ -11,10 +11,13 @@ import retrofit2.http.POST;
 
 public interface TripEndpoint {
 
-    @GET("/api/listar/aluno")
-    Call<ArrayList<TripModel>> getTrips();
+    @GET("/api/listar/viagem")
+    Call<TripModel> getTrip();
 
-    @POST("/api/cadastro/aluno")
+    @GET("/api/listar/viagem/conta")
+    Call<ArrayList<TripModel>> getTripsByAccount();
+
+    @POST("/api/cadastro/viagem")
     Call<TripModel> postTrips(@Body TripModel trip);
 
 }

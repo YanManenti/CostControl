@@ -12,6 +12,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.costcontrol.Models.TripModel;
+import com.example.costcontrol.Utils.ExtraActivity;
 import com.example.costcontrol.Utils.TripCreator;
 import com.example.costcontrol.persistance.SQLiteManager;
 import com.example.costcontrol.persistance.models.Trip;
@@ -44,16 +45,20 @@ public class Trips extends AppCompatActivity {
                 startActivity(new Intent(this, LoginActivity.class));
             }
             userId=value;
-            new TripCreator(container, this, value);
+            TripCreator.render(container, getResources(),this, value);
         }else{
             startActivity(new Intent(this, LoginActivity.class));
         }
 
         criarViagemBtn = findViewById(R.id.criarViagemBtn);
         criarViagemBtn.setOnClickListener(v -> {
-            Intent intent = new Intent(this, NewTrip.class);
-            intent.putExtra("userId", userId);
-            startActivity(intent);
+//            Intent intent = new Intent(this, NewTrip.class);
+//            intent.putExtra("userId", userId);
+//            startActivity(intent)
+            ExtraActivity.start(this, () -> {
+                Intent intent = new Intent(this, NewTrip.class);
+                return ExtraActivity.setUserId(intent, userId);
+            });
         });
 
         //Pegar as viagems do banco

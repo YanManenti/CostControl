@@ -24,6 +24,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.costcontrol.Models.EntretenimentoModel;
+import com.example.costcontrol.Utils.ExtraActivity;
 import com.example.costcontrol.persistance.SQLiteManager;
 import com.example.costcontrol.persistance.models.Entreteinment;
 import com.example.costcontrol.persistance.models.Trip;
@@ -159,9 +160,13 @@ public class NewTrip extends AppCompatActivity {
                 entretenimento.setTripId(result.getId());
                 sqLiteManager.addEntreteinmentToDatabase(entretenimento);
             }
-            Intent intent = new Intent(this, Trips.class);
-            intent.putExtra("userId", userId);
-            startActivity(intent);
+//            Intent intent = new Intent(this, Trips.class);
+//            intent.putExtra("userId", userId);
+//            startActivity(intent);
+            ExtraActivity.start(this, () -> {
+                Intent intent = new Intent(this, Trips.class);
+                return ExtraActivity.setUserId(intent, userId);
+            });
 
         });
 
@@ -685,31 +690,5 @@ public class NewTrip extends AppCompatActivity {
         custoEntretenimento.setText(floatToString(result));
         custoTotal.setText(floatToString(custoTotalValue));
     }
-
-//    public float calculoTotal(Boolean hospedagem, Boolean refeicoes, Boolean tarifaAerea, Boolean combustivel,
-//                              float custoMedioNoiteValue, Integer totalNoitesValue, Integer totalQuartosValue,
-//                              Integer refeicoesDiaValue, Integer numeroViajantesValue, float custoEstimadoRefeicaoValue,
-//                              Integer duracaoDiasValue, float custoEstimadoPessoaValue, float aluguelVeiculoValue,
-//                              float mediaQuilometrosLitroValue, Integer totalVeiculosValue, float totalEstimadoQuilometrosValue,
-//                              float custoMedioLitroValue, List<Entreteinment> entretenimentoValues){
-//        float result = 0;
-//        if(hospedagem){
-//            result += (custoMedioNoiteValue*totalNoitesValue)*totalQuartosValue;
-//        }
-//        if(refeicoes){
-//            result += ((refeicoesDiaValue*numeroViajantesValue)*custoEstimadoRefeicaoValue)*duracaoDiasValue;
-//        }
-//        if(tarifaAerea){
-//            result += (custoEstimadoPessoaValue*numeroViajantesValue) + aluguelVeiculoValue;
-//        }
-//
-//        if(combustivel && mediaQuilometrosLitroValue!=0 && totalVeiculosValue!=0){
-//            result = ((totalEstimadoQuilometrosValue/mediaQuilometrosLitroValue)*custoMedioLitroValue)/totalVeiculosValue;
-//        }
-//        for (Entreteinment current: entretenimentoValues) {
-//            result+=current.getPrice();
-//        }
-//        return result;
-//    }
 
 }

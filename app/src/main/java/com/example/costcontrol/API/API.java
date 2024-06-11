@@ -18,9 +18,15 @@ public class API {
             .addConverterFactory(GsonConverterFactory.create())
             .build();
 
-    public static void getTrips(final Callback<ArrayList<TripModel>> callback) {
+    public static void getTrip(final Callback<TripModel> callback) {
         TripEndpoint endPoint = retrofit.create(TripEndpoint.class);
-        Call<ArrayList<TripModel>> call = endPoint.getTrips();
+        Call<TripModel> call = endPoint.getTrip();
+        call.enqueue(callback);
+    }
+
+    public static void getTripsByAccount(final Callback<ArrayList<TripModel>> callback){
+        TripEndpoint endPoint = retrofit.create(TripEndpoint.class);
+        Call<ArrayList<TripModel>> call = endPoint.getTripsByAccount();
         call.enqueue(callback);
     }
 
