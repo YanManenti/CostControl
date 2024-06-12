@@ -1,9 +1,8 @@
 package com.example.costcontrol.Models;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 
-public class EntretenimentoModel implements Serializable {
+public class Refeicao implements Serializable {
     private long id;
     private long viagemId;
 
@@ -22,14 +21,15 @@ public class EntretenimentoModel implements Serializable {
     public void setViagemId(long viagemId) {
         this.viagemId = viagemId;
     }
-    private final long idConta = 128113;
-    public String entretenimento;
-    public double valor;
 
-    public EntretenimentoModel(long id, long viagemId, String entretenimento, double valor) {
+    private final long idConta = 128113;
+    public double custoRefeicao;
+    public int refeicoesDia;
+
+    public Refeicao(long id, long viagemId, double custoRefeicao, int refeicoesDia) {
         this.id = id;
         this.viagemId = viagemId;
-        this.entretenimento = entretenimento;
-        this.valor = valor;
+        this.custoRefeicao = custoRefeicao;
+        this.refeicoesDia = refeicoesDia;
     }
 }

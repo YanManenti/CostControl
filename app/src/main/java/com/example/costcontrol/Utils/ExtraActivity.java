@@ -21,12 +21,12 @@ public class ExtraActivity {
         context.startActivity(intent);
     }
 
-    public static Intent setUserId(Intent intent, Integer userId){
+    public static Intent setUserId(Intent intent, long userId){
         intent.putExtra("userId", userId);
         return intent;
     }
 
-    public static Intent setTripId(Intent intent, Integer tripId){
+    public static Intent setTripId(Intent intent, long tripId){
         intent.putExtra("tripId", tripId);
         return intent;
     }
@@ -36,16 +36,16 @@ public class ExtraActivity {
         return intent;
     }
 
-    public static Integer getUserId(Activity activity){
+    public static long getUserId(Activity activity){
         try {
             Bundle extras = activity.getIntent().getExtras();
             if (extras != null) {
-                return extras.getInt("userId");
+                return extras.getLong("userId");
             }
-            return null;
+            return -1;
         }catch (Exception e){
             Toast.makeText(activity.getBaseContext(), e.getMessage(), Toast.LENGTH_LONG).show();
-            return null;
+            return -1;
         }
     }
 

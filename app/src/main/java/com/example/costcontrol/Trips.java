@@ -38,17 +38,8 @@ public class Trips extends AppCompatActivity {
 
         container = findViewById(R.id.scrollContainer);
 
-        Bundle extras = getIntent().getExtras();
-        if (extras != null) {
-            Integer value = extras.getInt("userId");
-            if(value==-1){
-                startActivity(new Intent(this, LoginActivity.class));
-            }
-            userId=value;
-            TripCreator.render(container, getResources(),this, value);
-        }else{
-            startActivity(new Intent(this, LoginActivity.class));
-        }
+            TripCreator.render(container, getResources(),this);
+
 
         criarViagemBtn = findViewById(R.id.criarViagemBtn);
         criarViagemBtn.setOnClickListener(v -> {

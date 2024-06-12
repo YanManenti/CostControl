@@ -18,9 +18,9 @@ public class API {
             .addConverterFactory(GsonConverterFactory.create())
             .build();
 
-    public static void getTrip(final Callback<TripModel> callback) {
+    public static void getTrip(long viagemId, final Callback<TripModel> callback) {
         TripEndpoint endPoint = retrofit.create(TripEndpoint.class);
-        Call<TripModel> call = endPoint.getTrip();
+        Call<TripModel> call = endPoint.getTrip(viagemId);
         call.enqueue(callback);
     }
 
