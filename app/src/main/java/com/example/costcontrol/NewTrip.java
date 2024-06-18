@@ -96,152 +96,153 @@ public class NewTrip extends AppCompatActivity {
         hospedagemSetup();
         entretenimentoSetup(this);
 
-        Bundle extras = getIntent().getExtras();
-        if (extras != null) {
-            int extraUserId = extras.getInt("userId");
-            Integer extraTripId = extras.getInt("tripId");
-            userId = extraUserId;
-            if (extraTripId != 0) {
-//                Trip currentTrip = sqLiteManager.getTripById(extraTripId);
-//                entretenimentoValues = sqLiteManager.listEntreteinmentByTripId(extraTripId);
-                try {
-                    API.getTrip(extraTripId, new Callback<TripModel>() {
-                        @Override
-                        public void onResponse(Call<TripModel> call, Response<TripModel> response) {
-                            if(response != null && response.isSuccessful()){
-                                currentTrip = response.body();
-                            }
-                        }
+        Integer extraUserId = ExtraActivity.getUserId(this);
+        Integer extraTripId = ExtraActivity.getTripId(this);
 
-                        @Override
-                        public void onFailure(Call<TripModel> call, Throwable t) {
-                            throw new RuntimeException(t);
-                        }
-                    });
-                }catch (Exception e){
-                    SweetAlert.showErrorDialog(this);
-                }
-                updateHospedagem();
-                updateRefeicoes();
-                updateCombustivel();
-                updateTarifaAerea();
-                updateEntretenimento();
-
-                loadLocalVariables(currentTrip);
-
-                salvarBtn.setText(R.string.atualizar);
-                salvarBtn.setOnClickListener(v -> {
-
-                    if(combustivelCheckbox.isChecked()){
-                        gasolina = new Gasolina(
-                                currentTrip.gasolina.getId(),
-                                currentTrip.getId(),
-                                totalEstimadoQuilometrosValue,
-                                mediaQuilometrosLitroValue,
-                                custoMedioLitroValue,
-                                totalVeiculosValue
-                        );
-                    }
-
-                    if(hospedagemCheckbox.isChecked()){
-                        hospedagem = new Hospedagem(
-                                currentTrip.hospedagem.getId(),
-                                currentTrip.getId(),
-                                custoMedioNoiteValue,
-                                totalNoitesValue,
-                                totalQuartosValue
-                        );
-                    }
-
-                    if(tarifaAereaCheckbox.isChecked()){
-                        aereo = new Aereo(
-                                currentTrip.aereo.getId(),
-                                currentTrip.getId(),
-                                custoEstimadoPessoaValue,
-                                aluguelVeiculoValue
-                        );
-                    }
-
-                    if(refeicoesCheckbox.isChecked()){
-                        refeicao = new Refeicao(
-                                currentTrip.refeicao.getId(),
-                                currentTrip.getId(),
-                                custoEstimadoRefeicaoValue,
-                                refeicoesDiaValue
-                        );
-                    }
-
-                    TripModel newTrip = new TripModel(
-                            currentTrip.getId(),
-                            numeroViajantesValue,
-                            duracaoDiasValue,
-                            custoTotalValue,
-                            custoEstimadoPessoaValue,
-                            destinoInput.getText().toString(),
-                            gasolina,
-                            aereo,
-                            hospedagem,
-                            refeicao,
-                            entretenimentoValues
-                    );
-
-                    try {
-
-                        Activity currentActivity = ActivityFinder.getActivity(this);
-                        SweetAlertDialog alert = SweetAlert.showLoadingDialog(currentActivity);
-                        API.postTrips(newTrip, new Callback<TripModel>() {
-                            @Override
-                            public void onResponse(Call<TripModel> call, Response<TripModel> response) {
-                                if(response != null && response.isSuccessful()){
-                                    if(newTrip.getId() == response.body().getId()){
-                                        SweetAlert.closeAnyDialog(alert);
-                                    }
-                                }
-                            }
-
-                            @Override
-                            public void onFailure(Call<TripModel> call, Throwable t) {
-                                SweetAlert.closeAnyDialog(alert);
-                                SweetAlert.showErrorDialog(currentActivity);
-                            }
-                        });
-                    }catch (Exception e){
-                        //TODO Implement exception handling
-                    }
-                    ExtraActivity.start(v.getContext(), () -> {
-                        Intent intent = new Intent(v.getContext(), Trips.class);
-                        return ExtraActivity.setUserId(intent, extraUserId);
-                    });
-                });
-            }
+        //Erro caso o id do usuário não for encontrado. Volta para login.
+        if(extraUserId==null){
+            ExtraActivity.start(this, () -> new Intent(this, LoginActivity.class));
         }
-        salvarBtn.setText(R.string.salvar);
-        salvarBtn.setOnClickListener(v -> {
-            Trip newTrip = new Trip(null, destinoInput.getText().toString(), numeroViajantesValue,
-                    duracaoDiasValue, combustivelCheckbox.isChecked(), totalEstimadoQuilometrosValue,
-                    mediaQuilometrosLitroValue, custoMedioLitroValue, totalVeiculosValue, custoMedioNoiteValue,
-                    totalNoitesValue, totalQuartosValue, userId, tarifaAereaCheckbox.isChecked(),
-                    custoEstimadoPessoaValue, aluguelVeiculoValue, refeicoesCheckbox.isChecked(),
-                    custoEstimadoRefeicaoValue, refeicoesDiaValue, hospedagemCheckbox.isChecked());
-            Trip result = sqLiteManager.addTripToDatabase(newTrip);
 
-            for (Entreteinment entretenimento : entretenimentoValues) {
-                entretenimento.setTripId(result.getId());
-                sqLiteManager.addEntreteinmentToDatabase(entretenimento);
-            }
+        userId = extraUserId;
+
+//        if (extraTripId != null) {
+////                Trip currentTrip = sqLiteManager.getTripById(extraTripId);
+////                entretenimentoValues = sqLiteManager.listEntreteinmentByTripId(extraTripId);
+//            try {
+//                API.getTrip(extraTripId, new Callback<TripModel>() {
+//                    @Override
+//                    public void onResponse(Call<TripModel> call, Response<TripModel> response) {
+//                        if (response != null && response.isSuccessful()) {
+//                            currentTrip = response.body();
+//                        }
+//                    }
+//
+//                    @Override
+//                    public void onFailure(Call<TripModel> call, Throwable t) {
+//                        throw new RuntimeException(t);
+//                    }
+//                });
+//            } catch (Exception e) {
+//                SweetAlert.showErrorDialog(this);
+//            }
+//            updateHospedagem();
+//            updateRefeicoes();
+//            updateCombustivel();
+//            updateTarifaAerea();
+//            updateEntretenimento();
+//
+//            loadLocalVariables(currentTrip);
+//
+//            salvarBtn.setText(R.string.atualizar);
+//            salvarBtn.setOnClickListener(v -> saveOnClickListener(salvarBtn, currentTrip.getId(), extraUserId));
+//        }
+
+        salvarBtn.setText(R.string.salvar);
+        salvarBtn.setOnClickListener(v -> saveOnClickListener(salvarBtn, extraUserId));
+//            Trip newTrip = new Trip(null, destinoInput.getText().toString(), numeroViajantesValue,
+//                    duracaoDiasValue, combustivelCheckbox.isChecked(), totalEstimadoQuilometrosValue,
+//                    mediaQuilometrosLitroValue, custoMedioLitroValue, totalVeiculosValue, custoMedioNoiteValue,
+//                    totalNoitesValue, totalQuartosValue, userId, tarifaAereaCheckbox.isChecked(),
+//                    custoEstimadoPessoaValue, aluguelVeiculoValue, refeicoesCheckbox.isChecked(),
+//                    custoEstimadoRefeicaoValue, refeicoesDiaValue, hospedagemCheckbox.isChecked());
+//            Trip result = sqLiteManager.addTripToDatabase(newTrip);
+//
+//            for (Entreteinment entretenimento : entretenimentoValues) {
+//                entretenimento.setTripId(result.getId());
+//                sqLiteManager.addEntreteinmentToDatabase(entretenimento);
+//            }
 //            Intent intent = new Intent(this, Trips.class);
 //            intent.putExtra("userId", userId);
 //            startActivity(intent);
-            ExtraActivity.start(this, () -> {
-                Intent intent = new Intent(this, Trips.class);
-                return ExtraActivity.setUserId(intent, userId);
-            });
+//            ExtraActivity.start(this, () -> {
+//                Intent intent = new Intent(this, Trips.class);
+//                return ExtraActivity.setUserId(intent, userId);
+//            });
 
-        });
+//        });
 
     }
 
-    private void loadLocalVariables(TripModel currentTrip){
+    private void saveOnClickListener(View v, Integer extraUserId) {
+
+        if (combustivelCheckbox.isChecked()) {
+            gasolina = new Gasolina(
+                    extraUserId,
+                    totalEstimadoQuilometrosValue,
+                    mediaQuilometrosLitroValue,
+                    custoMedioLitroValue,
+                    totalVeiculosValue
+            );
+        }
+
+        if (hospedagemCheckbox.isChecked()) {
+            hospedagem = new Hospedagem(
+                    extraUserId,
+                    custoMedioNoiteValue,
+                    totalNoitesValue,
+                    totalQuartosValue
+            );
+        }
+
+        if (tarifaAereaCheckbox.isChecked()) {
+            aereo = new Aereo(
+                    extraUserId,
+                    custoEstimadoPessoaValue,
+                    aluguelVeiculoValue
+            );
+        }
+
+        if (refeicoesCheckbox.isChecked()) {
+            refeicao = new Refeicao(
+                    extraUserId,
+                    custoEstimadoRefeicaoValue,
+                    refeicoesDiaValue
+            );
+        }
+
+        TripModel newTrip = new TripModel(
+                extraUserId,
+                numeroViajantesValue,
+                duracaoDiasValue,
+                custoTotalValue,
+                custoEstimadoPessoaValue,
+                destinoInput.getText().toString(),
+                gasolina,
+                aereo,
+                hospedagem,
+                refeicao,
+                entretenimentoValues
+        );
+
+        try {
+
+            Activity currentActivity = ActivityFinder.getActivity(this);
+            SweetAlertDialog alert = SweetAlert.showLoadingDialog(currentActivity);
+            API.postTrips(newTrip, new Callback<TripModel>() {
+                @Override
+                public void onResponse(Call<TripModel> call, Response<TripModel> response) {
+                    if (response != null && response.isSuccessful()) {
+                            SweetAlert.closeAnyDialog(alert);
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<TripModel> call, Throwable t) {
+                    SweetAlert.closeAnyDialog(alert);
+                    SweetAlert.showErrorDialog(currentActivity, "Erro ao salvar viagem");
+                }
+            });
+        } catch (Exception e) {
+            //TODO Implement exception handling
+        }
+        ExtraActivity.start(v.getContext(), () -> {
+            Intent intent = new Intent(v.getContext(), Trips.class);
+            return ExtraActivity.setUserId(intent, extraUserId);
+        });
+    }
+
+    private void loadLocalVariables(TripModel currentTrip) {
         destinoInput.setText(currentTrip.local);
         numeroViajantesInput.setText(currentTrip.totalViajantes);
         numeroViajantesValue = currentTrip.totalViajantes;
@@ -269,10 +270,10 @@ public class NewTrip extends AppCompatActivity {
         totalNoitesValue = currentTrip.hospedagem.totalNoite;
         totalQuartosInput.setText(currentTrip.hospedagem.totalQuartos);
         totalQuartosValue = currentTrip.hospedagem.totalQuartos;
-        combustivelCheckbox.setChecked(currentTrip.gasolina!=null);
-        tarifaAereaCheckbox.setChecked(currentTrip.aereo!=null);
-        refeicoesCheckbox.setChecked(currentTrip.refeicao!=null);
-        hospedagemCheckbox.setChecked(currentTrip.hospedagem!=null);
+        combustivelCheckbox.setChecked(currentTrip.gasolina != null);
+        tarifaAereaCheckbox.setChecked(currentTrip.aereo != null);
+        refeicoesCheckbox.setChecked(currentTrip.refeicao != null);
+        hospedagemCheckbox.setChecked(currentTrip.hospedagem != null);
         entretenimentoValues.addAll(currentTrip.listaEntretenimento);
     }
 
@@ -671,10 +672,8 @@ public class NewTrip extends AppCompatActivity {
     }
 
     public void entretenimentoSetup(Context context) {
-
-
         adicionarBtn.setOnClickListener(v -> {
-            createEntretenimentoElement(context, new EntretenimentoModel());
+            createEntretenimentoElement(context, new EntretenimentoModel(userId,"",0));
         });
     }
 
@@ -710,10 +709,10 @@ public class NewTrip extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (s.length() == 0) {
-                    entreteinment.entretenimento="";
+                    entreteinment.entretenimento = "";
                     return;
                 }
-                entreteinment.entretenimento=s.toString();
+                entreteinment.entretenimento = s.toString();
             }
 
             @Override

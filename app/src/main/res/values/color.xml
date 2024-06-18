@@ -6,4 +6,6 @@
     <color name="surfaceYellow">#F9C784</color>
     <color name="surfaceOrange">#FC7A1E</color>
     <color name="surfaceWhite">#E7E7E7</color>
+    <color name="blue_btn_bg_color">#FC7A1E</color>
+    <color name="blue_btn_bg_pressed_color">#FC7A1E</color>
 </resources>

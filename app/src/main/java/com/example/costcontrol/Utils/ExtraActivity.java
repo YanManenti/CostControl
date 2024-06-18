@@ -21,7 +21,7 @@ public class ExtraActivity {
         context.startActivity(intent);
     }
 
-    public static Intent setUserId(Intent intent, long userId){
+    public static Intent setUserId(Intent intent, int userId){
         intent.putExtra("userId", userId);
         return intent;
     }
@@ -36,16 +36,16 @@ public class ExtraActivity {
         return intent;
     }
 
-    public static long getUserId(Activity activity){
+    public static Integer getUserId(Activity activity){
         try {
             Bundle extras = activity.getIntent().getExtras();
             if (extras != null) {
-                return extras.getLong("userId");
+                return extras.getInt("userId");
             }
-            return -1;
+            return null;
         }catch (Exception e){
             Toast.makeText(activity.getBaseContext(), e.getMessage(), Toast.LENGTH_LONG).show();
-            return -1;
+            return null;
         }
     }
 

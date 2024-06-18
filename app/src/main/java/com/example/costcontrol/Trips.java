@@ -13,6 +13,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.example.costcontrol.Models.TripModel;
 import com.example.costcontrol.Utils.ExtraActivity;
+import com.example.costcontrol.Utils.SweetAlert;
 import com.example.costcontrol.Utils.TripCreator;
 import com.example.costcontrol.persistance.SQLiteManager;
 import com.example.costcontrol.persistance.models.Trip;
@@ -38,8 +39,15 @@ public class Trips extends AppCompatActivity {
 
         container = findViewById(R.id.scrollContainer);
 
-            TripCreator.render(container, getResources(),this);
+        userId=ExtraActivity.getUserId(this);
 
+        if(userId==null){
+            ExtraActivity.start(this, ()-> new Intent(this, LoginActivity.class));
+        }
+
+//        SweetAlert.showErrorDialog(this,userId.toString());
+
+        TripCreator.render(container, getResources(),this, userId);
 
         criarViagemBtn = findViewById(R.id.criarViagemBtn);
         criarViagemBtn.setOnClickListener(v -> {

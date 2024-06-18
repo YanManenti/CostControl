@@ -25,12 +25,11 @@ public class SweetAlert {
         return pDialog;
     }
 
-    public static void showErrorDialog(Activity activity){
+    public static void showErrorDialog(Activity activity, String errorText){
         SweetAlertDialog pDialog = new SweetAlertDialog(activity, SweetAlertDialog.ERROR_TYPE);
-        pDialog.setContentText("Algum erro aconteceu!");
+        pDialog.setContentText(errorText);
         pDialog.setConfirmText((String) activity.getResources().getText(R.string.close));
         pDialog.show();
-        pDialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(pDialog.getContext().getResources().getColor(R.color.surfaceOrange, pDialog.getContext().getTheme()));
     }
 
     public static void closeAnyDialog(SweetAlertDialog dialog){

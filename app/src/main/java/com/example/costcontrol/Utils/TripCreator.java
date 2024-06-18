@@ -37,6 +37,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import retrofit2.Call;
@@ -46,7 +47,7 @@ import retrofit2.Response;
 public class TripCreator {
 
     @SuppressLint("SetTextI18n")
-    public static void render(LinearLayout basicView,Resources resources, Context context) {
+    public static void render(LinearLayout basicView,Resources resources, Context context, Integer userId) {
         Activity currentActivity = ActivityFinder.getActivity(context);
 //        SQLiteManager sqLiteManager = SQLiteManager.instanceOfDatabase(context);
 //        List<Trip> list = sqLiteManager.listTripsByUserId(userId);
@@ -58,13 +59,14 @@ public class TripCreator {
             @Override
             public void onResponse(Call<ArrayList<TripModel>> call, Response<ArrayList<TripModel>> response) {
                 if (response != null && response.isSuccessful()) {
-                    asyncTripRender(basicView, resources, context, response.body());
+                    ArrayList<TripModel> filteredResponse = response.body().stream().filter(trip -> trip.usuario == userId).collect(Collectors.toCollection(ArrayList::new));
+                    asyncTripRender(basicView, resources, context, filteredResponse);
                 }
                 SweetAlert.closeAnyDialog(alertDialog);
             }
             @Override
             public void onFailure(Call<ArrayList<TripModel>> call, Throwable t) {
-                SweetAlert.showErrorDialog(currentActivity);
+                SweetAlert.showErrorDialog(currentActivity,"Erro ao buscar viagens");
             }
         });
 
@@ -115,9 +117,15 @@ public class TripCreator {
         return result;
     }
 
+    public static double calculoPorPessoa(TripModel trip){
+        if (trip.totalViajantes==0){
+            return 0;
+        }
+        return calculoTotal(trip)/trip.totalViajantes;
+    }
+
     @SuppressLint("DefaultLocale")
     public static void asyncTripRender(LinearLayout basicView, Resources resources, Context context, ArrayList<TripModel> list){
-        final long userId = 128113;
         int dp;
         for (TripModel trip :  list) {
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -142,7 +150,7 @@ public class TripCreator {
             topWrapper.setLayoutParams(layoutParams);
             topWrapper.setBaselineAligned(false);
             topWrapper.setOrientation(LinearLayout.HORIZONTAL);
-            topWrapper.setWeightSum(5);
+            topWrapper.setWeightSum(3);
 
             LinearLayout viajantesWrapper = new LinearLayout(context);
             LinearLayout.LayoutParams viajantesParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT,1.7f);
@@ -173,38 +181,38 @@ public class TripCreator {
 
             TextView precoPessoaValue = new TextView(context);
             precoPessoaValue.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT));
-            precoPessoaValue.setText(String.format("R$ %s", trip.custoPorPessoa));
+            precoPessoaValue.setText(String.format("R$ %s", DecimalFormatter.format(calculoPorPessoa(trip))));
             precoPessoaValue.setTextColor(resources.getColor(R.color.surfaceOrange, context.getTheme()));
             precoPessoaValue.setTextSize(26);
             precoPessoaValue.setTypeface(precoPessoaValue.getTypeface(), Typeface.BOLD);
 
-            ImageButton configBtn = new ImageButton(context);
-            LinearLayout.LayoutParams configBtnLayout = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.MATCH_PARENT, 2f);
-            configBtnLayout.setMargins(5, 5, 5, 5);
-            configBtn.setLayoutParams(configBtnLayout);
-            configBtn.setScaleX(2);
-            configBtn.setScaleY(2);
-            configBtn.setImageResource(R.drawable.settings_24px);
-            configBtn.setBackground(Drawable.createFromPath("drawable/customyellowbutton.xml"));
-            configBtn.setColorFilter(ContextCompat.getColor(context,R.color.surfaceOrange));
-            configBtn.setContentDescription(resources.getText(R.string.editarviajem));
-            configBtn.setOnClickListener(v -> {
-//                Intent intent = new Intent(v.getContext(), NewTrip.class);
-//                intent.putExtra("tripId", trip.id);
-//                intent.putExtra("userId", userId);
-//                v.getContext().startActivity(intent);
-                ExtraActivity.start(v.getContext(), () -> {
-                    Intent intent = new Intent(v.getContext(), NewTrip.class);
-                    ExtraActivity.setUserId(intent, userId);
-                    return ExtraActivity.setTripId(intent, trip.getIdConta());
-                });
-            });
+//            ImageButton configBtn = new ImageButton(context);
+//            LinearLayout.LayoutParams configBtnLayout = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.MATCH_PARENT, 2f);
+//            configBtnLayout.setMargins(5, 5, 5, 5);
+//            configBtn.setLayoutParams(configBtnLayout);
+//            configBtn.setScaleX(2);
+//            configBtn.setScaleY(2);
+//            configBtn.setImageResource(R.drawable.settings_24px);
+//            configBtn.setBackground(Drawable.createFromPath("drawable/customyellowbutton.xml"));
+//            configBtn.setColorFilter(ContextCompat.getColor(context,R.color.surfaceOrange));
+//            configBtn.setContentDescription(resources.getText(R.string.editarviajem));
+//            configBtn.setOnClickListener(v -> {
+////                Intent intent = new Intent(v.getContext(), NewTrip.class);
+////                intent.putExtra("tripId", trip.id);
+////                intent.putExtra("userId", userId);
+////                v.getContext().startActivity(intent);
+//                ExtraActivity.start(v.getContext(), () -> {
+//                    Intent intent = new Intent(v.getContext(), NewTrip.class);
+//                    ExtraActivity.setUserId(intent, userId);
+//                    return ExtraActivity.setTripId(intent, trip.getIdConta());
+//                });
+//            });
 
             LinearLayout bottomWrapper = new LinearLayout(context);
             bottomWrapper.setLayoutParams(layoutParams);
             bottomWrapper.setBaselineAligned(false);
             bottomWrapper.setOrientation(LinearLayout.HORIZONTAL);
-            bottomWrapper.setWeightSum(5);
+            bottomWrapper.setWeightSum(3);
 
             LinearLayout duracaoWrapper = new LinearLayout(context);
             duracaoWrapper.setLayoutParams(viajantesParams);
@@ -240,19 +248,19 @@ public class TripCreator {
             precoTotalValue.setTextSize(26);
             precoTotalValue.setTypeface(precoTotalValue.getTypeface(), Typeface.BOLD);
 
-            ImageButton deleteBtn = new ImageButton(context);
-            deleteBtn.setLayoutParams(configBtnLayout);
-            deleteBtn.setScaleY(2);
-            deleteBtn.setScaleX(2);
-            deleteBtn.setImageResource(R.drawable.delete_24px);
-            deleteBtn.setBackground(Drawable.createFromPath("drawable/customyellowbutton.xml"));
-            deleteBtn.setColorFilter(ContextCompat.getColor(context,R.color.surfaceOrange));
-            deleteBtn.setContentDescription(resources.getText(R.string.excluirviajem));
-            deleteBtn.setOnClickListener(v -> {
-//                sqLiteManager.deleteTripById(trip.id);
-                basicView.removeAllViews();
-                TripCreator.render(basicView,resources, context);
-            });
+//            ImageButton deleteBtn = new ImageButton(context);
+//            deleteBtn.setLayoutParams(configBtnLayout);
+//            deleteBtn.setScaleY(2);
+//            deleteBtn.setScaleX(2);
+//            deleteBtn.setImageResource(R.drawable.delete_24px);
+//            deleteBtn.setBackground(Drawable.createFromPath("drawable/customyellowbutton.xml"));
+//            deleteBtn.setColorFilter(ContextCompat.getColor(context,R.color.surfaceOrange));
+//            deleteBtn.setContentDescription(resources.getText(R.string.excluirviajem));
+//            deleteBtn.setOnClickListener(v -> {
+////                sqLiteManager.deleteTripById(trip.id);
+//                basicView.removeAllViews();
+//                TripCreator.render(basicView,resources, context, userId);
+//            });
 
 
 
@@ -266,7 +274,7 @@ public class TripCreator {
             topWrapper.addView(precoPessoaWrapper);
             precoPessoaWrapper.addView(precoPessoaText);
             precoPessoaWrapper.addView(precoPessoaValue);
-            topWrapper.addView(configBtn);
+//            topWrapper.addView(configBtn);
             linearLayout.addView(bottomWrapper);
             bottomWrapper.addView(duracaoWrapper);
             duracaoWrapper.addView(duracaoText);
@@ -274,7 +282,7 @@ public class TripCreator {
             bottomWrapper.addView(precoTotalWrapper);
             precoTotalWrapper.addView(precoTotalText);
             precoTotalWrapper.addView(precoTotalValue);
-            bottomWrapper.addView(deleteBtn);
+//            bottomWrapper.addView(deleteBtn);
 
         }
     }
