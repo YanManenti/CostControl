@@ -45,10 +45,6 @@ import retrofit2.Response;
 
 public class TripCreator {
 
-    public static int dpToPx( Resources resources,float dp) {
-        return Math.round(dp * resources.getDisplayMetrics().density);
-    }
-
     @SuppressLint("SetTextI18n")
     public static void render(LinearLayout basicView,Resources resources, Context context) {
         Activity currentActivity = ActivityFinder.getActivity(context);
@@ -109,7 +105,7 @@ public class TripCreator {
 
         if(trip.gasolina!=null && trip.gasolina.mediaKMLitro!=0 && trip.gasolina.totalVeiculos!=0){
             Gasolina gasolina = trip.gasolina;
-            result += ((gasolina.totalEstimadoKm/gasolina.mediaKMLitro)*gasolina.custoMedioLitro)/gasolina.totalVeiculos;
+            result += ((gasolina.totalEstimadoKM/gasolina.mediaKMLitro)*gasolina.custoMedioLitro)/gasolina.totalVeiculos;
         }
         if(trip.listaEntretenimento != null){
             for (EntretenimentoModel current: trip.listaEntretenimento) {
@@ -119,7 +115,8 @@ public class TripCreator {
         return result;
     }
 
-    public static void asyncTripRender(LinearLayout basicView,Resources resources, Context context, ArrayList<TripModel> list){
+    @SuppressLint("DefaultLocale")
+    public static void asyncTripRender(LinearLayout basicView, Resources resources, Context context, ArrayList<TripModel> list){
         final long userId = 128113;
         int dp;
         for (TripModel trip :  list) {
@@ -130,7 +127,7 @@ public class TripCreator {
             linearLayout.setBackgroundResource(R.drawable.customyellowbutton);
             linearLayout.setBaselineAligned(false);
             linearLayout.setOrientation(LinearLayout.VERTICAL);
-            dp = dpToPx(resources, 15);
+            dp = dpToPx.convert(resources, 15);
             linearLayout.setPadding(dp, dp, dp, dp);
             linearLayout.setWeightSum(2);
 
@@ -176,7 +173,7 @@ public class TripCreator {
 
             TextView precoPessoaValue = new TextView(context);
             precoPessoaValue.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT));
-            precoPessoaValue.setText("R$ "+trip.custoPorPessoa);
+            precoPessoaValue.setText(String.format("R$ %s", trip.custoPorPessoa));
             precoPessoaValue.setTextColor(resources.getColor(R.color.surfaceOrange, context.getTheme()));
             precoPessoaValue.setTextSize(26);
             precoPessoaValue.setTypeface(precoPessoaValue.getTypeface(), Typeface.BOLD);
@@ -220,7 +217,7 @@ public class TripCreator {
 
             TextView duracaoValue = new TextView(context);
             duracaoValue.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT));
-            duracaoValue.setText(trip.duracaoViagem + " dias");
+            duracaoValue.setText(String.format("%d dias", trip.duracaoViagem));
             duracaoValue.setTextColor(resources.getColor(R.color.surfaceOrange, context.getTheme()));
             duracaoValue.setTextSize(26);
             duracaoValue.setTypeface(duracaoValue.getTypeface(), Typeface.BOLD);
@@ -237,7 +234,7 @@ public class TripCreator {
             TextView precoTotalValue = new TextView(context);
             precoTotalValue.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT));
 //            List<Entreteinment> current = sqLiteManager.listEntreteinmentByTripId(trip.id);
-            precoTotalValue.setText("R$ " + DecimalFormatter.format(calculoTotal(trip)));
+            precoTotalValue.setText(String.format("R$ %s", DecimalFormatter.format(calculoTotal(trip))));
 
             precoTotalValue.setTextColor(resources.getColor(R.color.surfaceOrange, context.getTheme()));
             precoTotalValue.setTextSize(26);

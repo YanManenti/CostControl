@@ -22,7 +22,7 @@ public class Gasolina implements Serializable {
         this.viagemId = viagemId;
     }
     private final long idConta = 128113;
-    public int totalEstimadoKm;
+    public int totalEstimadoKM;
     public double mediaKMLitro;
     public double custoMedioLitro;
     public int totalVeiculos;
@@ -30,7 +30,7 @@ public class Gasolina implements Serializable {
     public Gasolina(long id, long viagemId, int totalEstimadoKm, double mediaKMLitro, double custoMedioLitro, int totalVeiculos) {
         this.id = id;
         this.viagemId = viagemId;
-        this.totalEstimadoKm = totalEstimadoKm;
+        this.totalEstimadoKM = totalEstimadoKm;
         this.mediaKMLitro = mediaKMLitro;
         this.custoMedioLitro = custoMedioLitro;
         this.totalVeiculos = totalVeiculos;

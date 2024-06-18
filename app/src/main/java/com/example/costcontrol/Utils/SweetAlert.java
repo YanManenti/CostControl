@@ -1,6 +1,14 @@
 package com.example.costcontrol.Utils;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
+
+import androidx.core.content.ContextCompat;
 
 import com.example.costcontrol.R;
 
@@ -17,12 +25,12 @@ public class SweetAlert {
         return pDialog;
     }
 
-    public static SweetAlertDialog showErrorDialog(Activity activity){
+    public static void showErrorDialog(Activity activity){
         SweetAlertDialog pDialog = new SweetAlertDialog(activity, SweetAlertDialog.ERROR_TYPE);
-        pDialog.setTitleText("Oops...");
-        pDialog.setContentText("Something went wrong!");
+        pDialog.setContentText("Algum erro aconteceu!");
+        pDialog.setConfirmText((String) activity.getResources().getText(R.string.close));
         pDialog.show();
-        return pDialog;
+        pDialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(pDialog.getContext().getResources().getColor(R.color.surfaceOrange, pDialog.getContext().getTheme()));
     }
 
     public static void closeAnyDialog(SweetAlertDialog dialog){

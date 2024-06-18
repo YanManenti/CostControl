@@ -7,6 +7,10 @@ public class EntretenimentoModel implements Serializable {
     private long id;
     private long viagemId;
 
+    public EntretenimentoModel() {
+
+    }
+
     public long getId() {
         return id;
     }
