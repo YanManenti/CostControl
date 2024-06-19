@@ -16,6 +16,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.costcontrol.Utils.ExtraActivity;
 import com.example.costcontrol.Utils.SharedPreferences;
 import com.example.costcontrol.persistance.SQLiteManager;
 import com.example.costcontrol.persistance.models.User;
@@ -64,9 +65,12 @@ public class LoginActivity extends AppCompatActivity {
             List<String> stored = sp.SPRead(this);
             if (stored.get(0) != null) {
                 User user = Login(stored.get(0), stored.get(1));
-                Intent intent = new Intent(this, Trips.class);
-                intent.putExtra("userId", user.getId());
-                startActivity(intent);
+//                Intent intent = new Intent(this, Trips.class);
+//                intent.putExtra("userId", user.getId());
+                ExtraActivity.start(this, () -> {
+                    Intent intent = new Intent(this, Trips.class);
+                    return intent.putExtra("userId", user.getId());
+                });
             }
 
         } catch (Exception e) {

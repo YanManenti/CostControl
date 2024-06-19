@@ -2,6 +2,7 @@ package com.example.costcontrol;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
 import androidx.annotation.Nullable;
@@ -25,6 +26,7 @@ public class Trips extends AppCompatActivity {
 
     LinearLayout container;
     AppCompatButton criarViagemBtn;
+    ImageButton updateTripsBtn;
     Integer userId;
 
     @Override
@@ -39,6 +41,8 @@ public class Trips extends AppCompatActivity {
 
         container = findViewById(R.id.scrollContainer);
 
+
+
         userId=ExtraActivity.getUserId(this);
 
         if(userId==null){
@@ -48,6 +52,11 @@ public class Trips extends AppCompatActivity {
 //        SweetAlert.showErrorDialog(this,userId.toString());
 
         TripCreator.render(container, getResources(),this, userId);
+
+        updateTripsBtn = findViewById(R.id.atualizarViagemBtn);
+        updateTripsBtn.setOnClickListener(v -> {
+            TripCreator.render(container, getResources(),this, userId);
+        });
 
         criarViagemBtn = findViewById(R.id.criarViagemBtn);
         criarViagemBtn.setOnClickListener(v -> {

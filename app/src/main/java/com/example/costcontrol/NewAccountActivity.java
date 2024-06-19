@@ -12,8 +12,10 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.costcontrol.API.API;
 import com.example.costcontrol.Utils.ExtraActivity;
 import com.example.costcontrol.Utils.SharedPreferences;
+import com.example.costcontrol.Utils.SweetAlert;
 import com.example.costcontrol.persistance.SQLiteManager;
 import com.example.costcontrol.persistance.models.User;
 
@@ -53,21 +55,24 @@ public class NewAccountActivity extends AppCompatActivity {
                         User user = new User(email, password);
                         sqLiteManager.addUserToDatabase(user);
 
-//                        Intent intent = new Intent(this, LoginActivity.class);
-//                        intent.putExtra("userEmail", user.getEmail());
-//                        startActivity(intent);
+                        //O usuário precisa ter um id que não esteja na lista de viagens
+                        //
+                        //API.getTripsByAccount();
+                        //ou
+                        //UUID.randomUUID()?
+
                         ExtraActivity.start(this, () -> {
                             Intent intent = new Intent(this, LoginActivity.class);
                             return ExtraActivity.setUserEmail(intent, user.getEmail());
                         });
                     } else {
-                        Toast.makeText(getBaseContext(), "As senhas são diferentes.", Toast.LENGTH_LONG).show();
+                        SweetAlert.showErrorDialog(this, "As senhas são diferentes.");
                     }
                 } else {
-                    Toast.makeText(getBaseContext(), "Os emails são diferentes.", Toast.LENGTH_LONG).show();
+                    SweetAlert.showErrorDialog(this, "Os emails são diferentes.");
                 }
             } catch (Error | Exception e) {
-                Toast.makeText(getBaseContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+                SweetAlert.showErrorDialog(this, e.getMessage());
             }
         });
     }

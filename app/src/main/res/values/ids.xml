@@ -39,4 +39,5 @@
     <item name="custoEntretenimento" type="id" />
     <item name="custoTotal" type="id" />
     <item name="entretenimentoContainer" type="id" />
+    <item name="atualizarViagemBtn" type="id"/>
 </resources>
