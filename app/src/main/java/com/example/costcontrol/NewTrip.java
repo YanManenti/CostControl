@@ -68,7 +68,6 @@ public class NewTrip extends AppCompatActivity {
 
     public Integer totalEstimadoQuilometrosValue = 0, numeroViajantesValue = 0, duracaoDiasValue = 0, totalVeiculosValue = 0, totalNoitesValue = 0, totalQuartosValue = 0, refeicoesDiaValue = 0;
     public List<EntretenimentoModel> entretenimentoValues = new ArrayList<>();
-    TripModel currentTrip = null;
     Gasolina gasolina;
     Hospedagem hospedagem;
     Aereo aereo;
@@ -85,9 +84,7 @@ public class NewTrip extends AppCompatActivity {
             return insets;
         });
 
-
-//        SQLiteManager sqLiteManager = SQLiteManager.instanceOfDatabase(this);
-
+        //Colocando os listeners para os inputs
         inputSetup();
         configuracoesGeraisSetup();
         combustivelSetup();
@@ -97,71 +94,18 @@ public class NewTrip extends AppCompatActivity {
         entretenimentoSetup(this);
 
         Integer extraUserId = ExtraActivity.getUserId(this);
-        Integer extraTripId = ExtraActivity.getTripId(this);
 
         //Erro caso o id do usuário não for encontrado. Volta para login.
-        if(extraUserId==null){
+        if (extraUserId == null) {
             ExtraActivity.start(this, () -> new Intent(this, LoginActivity.class));
         }
 
         userId = extraUserId;
 
-//        if (extraTripId != null) {
-////                Trip currentTrip = sqLiteManager.getTripById(extraTripId);
-////                entretenimentoValues = sqLiteManager.listEntreteinmentByTripId(extraTripId);
-//            try {
-//                API.getTrip(extraTripId, new Callback<TripModel>() {
-//                    @Override
-//                    public void onResponse(Call<TripModel> call, Response<TripModel> response) {
-//                        if (response != null && response.isSuccessful()) {
-//                            currentTrip = response.body();
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void onFailure(Call<TripModel> call, Throwable t) {
-//                        throw new RuntimeException(t);
-//                    }
-//                });
-//            } catch (Exception e) {
-//                SweetAlert.showErrorDialog(this);
-//            }
-//            updateHospedagem();
-//            updateRefeicoes();
-//            updateCombustivel();
-//            updateTarifaAerea();
-//            updateEntretenimento();
-//
-//            loadLocalVariables(currentTrip);
-//
-//            salvarBtn.setText(R.string.atualizar);
-//            salvarBtn.setOnClickListener(v -> saveOnClickListener(salvarBtn, currentTrip.getId(), extraUserId));
-//        }
-
+        //Como não tem edição, é apenas necessário salvar a viagem.
         salvarBtn.setText(R.string.salvar);
+        //Cria a viagem e tenta fazer o POST.
         salvarBtn.setOnClickListener(v -> saveOnClickListener(salvarBtn, extraUserId));
-//            Trip newTrip = new Trip(null, destinoInput.getText().toString(), numeroViajantesValue,
-//                    duracaoDiasValue, combustivelCheckbox.isChecked(), totalEstimadoQuilometrosValue,
-//                    mediaQuilometrosLitroValue, custoMedioLitroValue, totalVeiculosValue, custoMedioNoiteValue,
-//                    totalNoitesValue, totalQuartosValue, userId, tarifaAereaCheckbox.isChecked(),
-//                    custoEstimadoPessoaValue, aluguelVeiculoValue, refeicoesCheckbox.isChecked(),
-//                    custoEstimadoRefeicaoValue, refeicoesDiaValue, hospedagemCheckbox.isChecked());
-//            Trip result = sqLiteManager.addTripToDatabase(newTrip);
-//
-//            for (Entreteinment entretenimento : entretenimentoValues) {
-//                entretenimento.setTripId(result.getId());
-//                sqLiteManager.addEntreteinmentToDatabase(entretenimento);
-//            }
-//            Intent intent = new Intent(this, Trips.class);
-//            intent.putExtra("userId", userId);
-//            startActivity(intent);
-//            ExtraActivity.start(this, () -> {
-//                Intent intent = new Intent(this, Trips.class);
-//                return ExtraActivity.setUserId(intent, userId);
-//            });
-
-//        });
-
     }
 
     private void saveOnClickListener(View v, Integer extraUserId) {
@@ -215,15 +159,19 @@ public class NewTrip extends AppCompatActivity {
                 entretenimentoValues
         );
 
+        Activity currentActivity = ActivityFinder.getActivity(this);
         try {
 
-            Activity currentActivity = ActivityFinder.getActivity(this);
             SweetAlertDialog alert = SweetAlert.showLoadingDialog(currentActivity);
             API.postTrips(newTrip, new Callback<TripModel>() {
                 @Override
                 public void onResponse(Call<TripModel> call, Response<TripModel> response) {
                     if (response != null && response.isSuccessful()) {
-                            SweetAlert.closeAnyDialog(alert);
+                        SweetAlert.closeAnyDialog(alert);
+                        ExtraActivity.start(v.getContext(), () -> {
+                            Intent intent = new Intent(v.getContext(), Trips.class);
+                            return ExtraActivity.setUserId(intent, extraUserId);
+                        });
                     }
                 }
 
@@ -234,51 +182,8 @@ public class NewTrip extends AppCompatActivity {
                 }
             });
         } catch (Exception e) {
-            //TODO Implement exception handling
+            SweetAlert.showErrorDialog(currentActivity, "Erro ao salvar viagem");
         }
-        ExtraActivity.start(v.getContext(), () -> {
-            Intent intent = new Intent(v.getContext(), Trips.class);
-            return ExtraActivity.setUserId(intent, extraUserId);
-        });
-    }
-
-    private void loadLocalVariables(TripModel currentTrip) {
-        destinoInput.setText(currentTrip.local);
-        numeroViajantesInput.setText(currentTrip.totalViajantes);
-        numeroViajantesValue = currentTrip.totalViajantes;
-        duracaoDiasInput.setText(currentTrip.duracaoViagem);
-        duracaoDiasValue = currentTrip.duracaoViagem;
-        totalEstimadoQuilometrosInput.setText(currentTrip.gasolina.totalEstimadoKM);
-        totalEstimadoQuilometrosValue = currentTrip.gasolina.totalEstimadoKM;
-        mediaQuilometrosLitroInput.setText(DecimalFormatter.format(currentTrip.gasolina.mediaKMLitro));
-        mediaQuilometrosLitroValue = currentTrip.gasolina.mediaKMLitro;
-        custoMedioLitroInput.setText(DecimalFormatter.format(currentTrip.gasolina.custoMedioLitro));
-        custoMedioLitroValue = currentTrip.gasolina.custoMedioLitro;
-        totalVeiculosInput.setText(currentTrip.gasolina.totalVeiculos);
-        totalVeiculosValue = currentTrip.gasolina.totalVeiculos;
-        custoEstimadoPessoaInput.setText(DecimalFormatter.format(currentTrip.aereo.custoPessoa));
-        custoEstimadoPessoaValue = currentTrip.aereo.custoPessoa;
-        aluguelVeiculoInput.setText(DecimalFormatter.format(currentTrip.aereo.custoAluguelVeiculo));
-        aluguelVeiculoValue = currentTrip.aereo.custoAluguelVeiculo;
-        custoEstimadoRefeicaoInput.setText(DecimalFormatter.format(currentTrip.refeicao.custoRefeicao));
-        custoEstimadoRefeicaoValue = currentTrip.refeicao.custoRefeicao;
-        refeicoesDiaInput.setText(currentTrip.refeicao.refeicoesDia);
-        refeicoesDiaValue = currentTrip.refeicao.refeicoesDia;
-        custoMedioNoiteInput.setText(DecimalFormatter.format(currentTrip.hospedagem.custoMedioNoite));
-        custoMedioNoiteValue = currentTrip.hospedagem.custoMedioNoite;
-        totalNoitesInput.setText(DecimalFormatter.format(currentTrip.hospedagem.totalNoite));
-        totalNoitesValue = currentTrip.hospedagem.totalNoite;
-        totalQuartosInput.setText(currentTrip.hospedagem.totalQuartos);
-        totalQuartosValue = currentTrip.hospedagem.totalQuartos;
-        combustivelCheckbox.setChecked(currentTrip.gasolina != null);
-        tarifaAereaCheckbox.setChecked(currentTrip.aereo != null);
-        refeicoesCheckbox.setChecked(currentTrip.refeicao != null);
-        hospedagemCheckbox.setChecked(currentTrip.hospedagem != null);
-        entretenimentoValues.addAll(currentTrip.listaEntretenimento);
-    }
-
-    public String floatToString(Float value) {
-        return String.format(Locale.CANADA_FRENCH, "%.2f", value);
     }
 
     public String doubleToString(Double value) {
@@ -673,7 +578,7 @@ public class NewTrip extends AppCompatActivity {
 
     public void entretenimentoSetup(Context context) {
         adicionarBtn.setOnClickListener(v -> {
-            createEntretenimentoElement(context, new EntretenimentoModel(userId,"",0));
+            createEntretenimentoElement(context, new EntretenimentoModel(userId, "", 0));
         });
     }
 

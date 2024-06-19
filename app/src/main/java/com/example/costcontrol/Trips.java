@@ -39,19 +39,16 @@ public class Trips extends AppCompatActivity {
             return insets;
         });
 
-        container = findViewById(R.id.scrollContainer);
-
-
-
         userId=ExtraActivity.getUserId(this);
 
+        //Error handling
         if(userId==null){
             ExtraActivity.start(this, ()-> new Intent(this, LoginActivity.class));
         }
 
-//        SweetAlert.showErrorDialog(this,userId.toString());
-
+        container = findViewById(R.id.scrollContainer);
         TripCreator.render(container, getResources(),this, userId);
+
 
         updateTripsBtn = findViewById(R.id.atualizarViagemBtn);
         updateTripsBtn.setOnClickListener(v -> {
@@ -60,20 +57,10 @@ public class Trips extends AppCompatActivity {
 
         criarViagemBtn = findViewById(R.id.criarViagemBtn);
         criarViagemBtn.setOnClickListener(v -> {
-//            Intent intent = new Intent(this, NewTrip.class);
-//            intent.putExtra("userId", userId);
-//            startActivity(intent)
             ExtraActivity.start(this, () -> {
                 Intent intent = new Intent(this, NewTrip.class);
                 return ExtraActivity.setUserId(intent, userId);
             });
         });
-
-        //Pegar as viagems do banco
-
-
-
-
-//        TripCreator trips = new TripCreator(container, this, test);
     }
 }

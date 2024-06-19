@@ -48,17 +48,15 @@ public class TripCreator {
 
     @SuppressLint("SetTextI18n")
     public static void render(LinearLayout basicView,Resources resources, Context context, Integer userId) {
-        Activity currentActivity = ActivityFinder.getActivity(context);
-//        SQLiteManager sqLiteManager = SQLiteManager.instanceOfDatabase(context);
-//        List<Trip> list = sqLiteManager.listTripsByUserId(userId);
-//        resources = basicView.getResources();
 
+        Activity currentActivity = ActivityFinder.getActivity(context);
         SweetAlertDialog alertDialog = SweetAlert.showLoadingDialog(currentActivity);
 
         API.getTripsByAccount(new Callback<ArrayList<TripModel>>() {
             @Override
             public void onResponse(Call<ArrayList<TripModel>> call, Response<ArrayList<TripModel>> response) {
                 if (response != null && response.isSuccessful()) {
+                    //Pega apenas as viagens com id do usuário
                     ArrayList<TripModel> filteredResponse = response.body().stream().filter(trip -> trip.usuario == userId).collect(Collectors.toCollection(ArrayList::new));
                     asyncTripRender(basicView, resources, context, filteredResponse);
                 }
@@ -69,25 +67,6 @@ public class TripCreator {
                 SweetAlert.showErrorDialog(currentActivity,"Erro ao buscar viagens");
             }
         });
-
-//        #######################################     FOR FUTURE USE
-//        long id = 148;
-//        API.getTrip(id, new Callback<TripModel>() {
-//            @Override
-//            public void onResponse(Call<TripModel> call, Response<TripModel> response) {
-//                if (response != null && response.isSuccessful()) {
-//                    ArrayList<TripModel> teste = new ArrayList<>();
-//                    teste.add(response.body());
-//                    asyncTripRender(basicView, resources, context, teste);
-//                }
-//                SweetAlert.closeAnyDialog(alertDialog);
-//            }
-//
-//            @Override
-//            public void onFailure(Call<TripModel> call, Throwable t) {
-//                SweetAlert.showErrorDialog(currentActivity);
-//            }
-//        });
     }
 
     public static double calculoTotal(TripModel trip){
@@ -105,6 +84,7 @@ public class TripCreator {
             result += (aereo.custoPessoa* trip.totalViajantes) + aereo.custoAluguelVeiculo;
         }
 
+        //Check para divisão por zero
         if(trip.gasolina!=null && trip.gasolina.mediaKMLitro!=0 && trip.gasolina.totalVeiculos!=0){
             Gasolina gasolina = trip.gasolina;
             result += ((gasolina.totalEstimadoKM/gasolina.mediaKMLitro)*gasolina.custoMedioLitro)/gasolina.totalVeiculos;
@@ -186,28 +166,6 @@ public class TripCreator {
             precoPessoaValue.setTextSize(26);
             precoPessoaValue.setTypeface(precoPessoaValue.getTypeface(), Typeface.BOLD);
 
-//            ImageButton configBtn = new ImageButton(context);
-//            LinearLayout.LayoutParams configBtnLayout = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.MATCH_PARENT, 2f);
-//            configBtnLayout.setMargins(5, 5, 5, 5);
-//            configBtn.setLayoutParams(configBtnLayout);
-//            configBtn.setScaleX(2);
-//            configBtn.setScaleY(2);
-//            configBtn.setImageResource(R.drawable.settings_24px);
-//            configBtn.setBackground(Drawable.createFromPath("drawable/customyellowbutton.xml"));
-//            configBtn.setColorFilter(ContextCompat.getColor(context,R.color.surfaceOrange));
-//            configBtn.setContentDescription(resources.getText(R.string.editarviajem));
-//            configBtn.setOnClickListener(v -> {
-////                Intent intent = new Intent(v.getContext(), NewTrip.class);
-////                intent.putExtra("tripId", trip.id);
-////                intent.putExtra("userId", userId);
-////                v.getContext().startActivity(intent);
-//                ExtraActivity.start(v.getContext(), () -> {
-//                    Intent intent = new Intent(v.getContext(), NewTrip.class);
-//                    ExtraActivity.setUserId(intent, userId);
-//                    return ExtraActivity.setTripId(intent, trip.getIdConta());
-//                });
-//            });
-
             LinearLayout bottomWrapper = new LinearLayout(context);
             bottomWrapper.setLayoutParams(layoutParams);
             bottomWrapper.setBaselineAligned(false);
@@ -241,26 +199,12 @@ public class TripCreator {
 
             TextView precoTotalValue = new TextView(context);
             precoTotalValue.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT));
-//            List<Entreteinment> current = sqLiteManager.listEntreteinmentByTripId(trip.id);
             precoTotalValue.setText(String.format("R$ %s", DecimalFormatter.format(calculoTotal(trip))));
 
             precoTotalValue.setTextColor(resources.getColor(R.color.surfaceOrange, context.getTheme()));
             precoTotalValue.setTextSize(26);
             precoTotalValue.setTypeface(precoTotalValue.getTypeface(), Typeface.BOLD);
 
-//            ImageButton deleteBtn = new ImageButton(context);
-//            deleteBtn.setLayoutParams(configBtnLayout);
-//            deleteBtn.setScaleY(2);
-//            deleteBtn.setScaleX(2);
-//            deleteBtn.setImageResource(R.drawable.delete_24px);
-//            deleteBtn.setBackground(Drawable.createFromPath("drawable/customyellowbutton.xml"));
-//            deleteBtn.setColorFilter(ContextCompat.getColor(context,R.color.surfaceOrange));
-//            deleteBtn.setContentDescription(resources.getText(R.string.excluirviajem));
-//            deleteBtn.setOnClickListener(v -> {
-////                sqLiteManager.deleteTripById(trip.id);
-//                basicView.removeAllViews();
-//                TripCreator.render(basicView,resources, context, userId);
-//            });
 
 
 
@@ -274,7 +218,6 @@ public class TripCreator {
             topWrapper.addView(precoPessoaWrapper);
             precoPessoaWrapper.addView(precoPessoaText);
             precoPessoaWrapper.addView(precoPessoaValue);
-//            topWrapper.addView(configBtn);
             linearLayout.addView(bottomWrapper);
             bottomWrapper.addView(duracaoWrapper);
             duracaoWrapper.addView(duracaoText);
@@ -282,7 +225,6 @@ public class TripCreator {
             bottomWrapper.addView(precoTotalWrapper);
             precoTotalWrapper.addView(precoTotalText);
             precoTotalWrapper.addView(precoTotalValue);
-//            bottomWrapper.addView(deleteBtn);
 
         }
     }
