@@ -1,5 +1,7 @@
 package com.example.costcontrol.persistance.models;
 
+import java.util.Random;
+
 public class User {
 
     private Integer id;
@@ -11,6 +13,7 @@ public class User {
     public User(String email, String password) {
         this.email = email;
         this.password = password;
+        this.id = new Random().nextInt();
     }
     public Integer getId() {
         return id;

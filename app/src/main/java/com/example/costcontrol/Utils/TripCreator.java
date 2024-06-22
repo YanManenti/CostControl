@@ -48,6 +48,7 @@ public class TripCreator {
 
     @SuppressLint("SetTextI18n")
     public static void render(LinearLayout basicView,Resources resources, Context context, Integer userId) {
+        basicView.removeAllViews();
 
         Activity currentActivity = ActivityFinder.getActivity(context);
         SweetAlertDialog alertDialog = SweetAlert.showLoadingDialog(currentActivity);

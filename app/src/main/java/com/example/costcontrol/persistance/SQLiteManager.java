@@ -59,7 +59,7 @@ public class SQLiteManager extends SQLiteOpenHelper {
 
         StringBuilder userSb = new StringBuilder();
         userSb.append("CREATE TABLE User (")
-                .append("id INTEGER PRIMARY KEY AUTOINCREMENT, ")
+                .append("id INTEGER PRIMARY KEY, ")
                 .append("email TEXT, ")
                 .append("password TEXT")
                 .append(");");
@@ -147,6 +147,7 @@ public class SQLiteManager extends SQLiteOpenHelper {
         SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
 
         ContentValues contentValues = new ContentValues();
+        contentValues.put("id", user.getId());
         contentValues.put("email", user.getEmail());
         contentValues.put("password", user.getPassword());
 
