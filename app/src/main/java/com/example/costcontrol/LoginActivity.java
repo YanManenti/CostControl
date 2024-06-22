@@ -16,7 +16,9 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.costcontrol.Utils.ExtraActivity;
 import com.example.costcontrol.Utils.SharedPreferences;
+import com.example.costcontrol.Utils.SweetAlert;
 import com.example.costcontrol.persistance.SQLiteManager;
 import com.example.costcontrol.persistance.models.User;
 
@@ -64,14 +66,14 @@ public class LoginActivity extends AppCompatActivity {
             List<String> stored = sp.SPRead(this);
             if (stored.get(0) != null) {
                 User user = Login(stored.get(0), stored.get(1));
-                Intent intent = new Intent(this, Trips.class);
-                intent.putExtra("userId", user.getId());
-                startActivity(intent);
+                ExtraActivity.start(this, () -> {
+                    Intent intent = new Intent(this, Trips.class);
+                    return intent.putExtra("userId", user.getId());
+                });
             }
 
         } catch (Exception e) {
-            Toast.makeText(getBaseContext(), e.getMessage(), Toast.LENGTH_LONG).show();
-            e.printStackTrace();
+            SweetAlert.showErrorDialog(this,e.getMessage());
         }
 
 
@@ -79,7 +81,7 @@ public class LoginActivity extends AppCompatActivity {
             try {
                 User user = Login(emailInput.getText().toString(), passwordInput.getText().toString());
                 if(user==null){
-                    Toast.makeText(getBaseContext(), "Usuário não encontrado.", Toast.LENGTH_LONG).show();
+                    SweetAlert.showErrorDialog(this,"Usuário não encontrado.");
                     return;
                 }
                 if (remmemberLoginSwitch.isChecked()) {
@@ -87,12 +89,12 @@ public class LoginActivity extends AppCompatActivity {
                 }else{
                     sp.SPWrite(null, null, this);
                 }
-                Intent intent = new Intent(this, Trips.class);
-                intent.putExtra("userId", user.getId());
-                startActivity(intent);
+                ExtraActivity.start(this, () -> {
+                    Intent intent = new Intent(this, Trips.class);
+                    return intent.putExtra("userId", user.getId());
+                });
             } catch (Exception e) {
-                Toast.makeText(getBaseContext(), "Erro ao fazer login.", Toast.LENGTH_LONG).show();
-                e.printStackTrace();
+                SweetAlert.showErrorDialog(this,"Erro ao fazer login.");
             }
         });
 
@@ -101,7 +103,7 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         resetPasswordBtn.setOnClickListener(v -> {
-            Toast.makeText(getBaseContext(), "NÃO IMPLEMENTADO!", Toast.LENGTH_LONG).show();
+            SweetAlert.showErrorDialog(this,"Não implementado.");
         });
 
     }
@@ -111,7 +113,7 @@ public class LoginActivity extends AppCompatActivity {
         User user;
         user = sqLiteManager.getUserByEmail(email);
         if(!user.getPassword().equals(password)){
-            Toast.makeText(getBaseContext(), "Senha ou email errado.", Toast.LENGTH_LONG).show();
+            SweetAlert.showErrorDialog(this,"Senha ou email errados.");
             passwordInput.setText("");
             return null;
         }

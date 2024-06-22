@@ -2,6 +2,7 @@ package com.example.costcontrol;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
 import androidx.annotation.Nullable;
@@ -12,6 +13,8 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.costcontrol.Models.TripModel;
+import com.example.costcontrol.Utils.ExtraActivity;
+import com.example.costcontrol.Utils.SweetAlert;
 import com.example.costcontrol.Utils.TripCreator;
 import com.example.costcontrol.persistance.SQLiteManager;
 import com.example.costcontrol.persistance.models.Trip;
@@ -23,6 +26,7 @@ public class Trips extends AppCompatActivity {
 
     LinearLayout container;
     AppCompatButton criarViagemBtn;
+    ImageButton updateTripsBtn;
     Integer userId;
 
     @Override
@@ -35,32 +39,28 @@ public class Trips extends AppCompatActivity {
             return insets;
         });
 
-        container = findViewById(R.id.scrollContainer);
+        userId=ExtraActivity.getUserId(this);
 
-        Bundle extras = getIntent().getExtras();
-        if (extras != null) {
-            Integer value = extras.getInt("userId");
-            if(value==-1){
-                startActivity(new Intent(this, LoginActivity.class));
-            }
-            userId=value;
-            new TripCreator(container, this, value);
-        }else{
-            startActivity(new Intent(this, LoginActivity.class));
+        //Error handling
+        if(userId==null){
+            ExtraActivity.start(this, ()-> new Intent(this, LoginActivity.class));
         }
+
+        container = findViewById(R.id.scrollContainer);
+        TripCreator.render(container, getResources(),this, userId);
+
+
+        updateTripsBtn = findViewById(R.id.atualizarViagemBtn);
+        updateTripsBtn.setOnClickListener(v -> {
+            TripCreator.render(container, getResources(),this, userId);
+        });
 
         criarViagemBtn = findViewById(R.id.criarViagemBtn);
         criarViagemBtn.setOnClickListener(v -> {
-            Intent intent = new Intent(this, NewTrip.class);
-            intent.putExtra("userId", userId);
-            startActivity(intent);
+            ExtraActivity.start(this, () -> {
+                Intent intent = new Intent(this, NewTrip.class);
+                return ExtraActivity.setUserId(intent, userId);
+            });
         });
-
-        //Pegar as viagems do banco
-
-
-
-
-//        TripCreator trips = new TripCreator(container, this, test);
     }
 }

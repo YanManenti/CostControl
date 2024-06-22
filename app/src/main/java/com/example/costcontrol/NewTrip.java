@@ -1,6 +1,7 @@
 package com.example.costcontrol;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -23,7 +24,17 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.costcontrol.API.API;
+import com.example.costcontrol.Models.Aereo;
 import com.example.costcontrol.Models.EntretenimentoModel;
+import com.example.costcontrol.Models.Gasolina;
+import com.example.costcontrol.Models.Hospedagem;
+import com.example.costcontrol.Models.Refeicao;
+import com.example.costcontrol.Models.TripModel;
+import com.example.costcontrol.Utils.ActivityFinder;
+import com.example.costcontrol.Utils.DecimalFormatter;
+import com.example.costcontrol.Utils.ExtraActivity;
+import com.example.costcontrol.Utils.SweetAlert;
 import com.example.costcontrol.persistance.SQLiteManager;
 import com.example.costcontrol.persistance.models.Entreteinment;
 import com.example.costcontrol.persistance.models.Trip;
@@ -33,6 +44,11 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+
+import cn.pedant.SweetAlert.SweetAlertDialog;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class NewTrip extends AppCompatActivity {
 
@@ -45,13 +61,18 @@ public class NewTrip extends AppCompatActivity {
     AppCompatButton adicionarBtn, salvarBtn;
     Integer userId;
 
-    public float totalEstimadoQuilometrosValue = 0, mediaQuilometrosLitroValue = 0, custoMedioLitroValue = 0,
+    public double custoMedioLitroValue = 0, mediaQuilometrosLitroValue = 0,
             custoEstimadoPessoaValue = 0, aluguelVeiculoValue = 0, custoEstimadoRefeicaoValue = 0, custoMedioNoiteValue = 0,
             custoCombustivelValue = 0, custoTarifaAereaValue = 0, custoRefeicoesValue = 0,
             custoHospedagemValue = 0, custoTotalValue = 0, entretenimentoTemporario = 0;
 
-    public Integer numeroViajantesValue = 0, duracaoDiasValue = 0, totalVeiculosValue = 0, totalNoitesValue = 0, totalQuartosValue = 0, refeicoesDiaValue = 0;
-    public List<Entreteinment> entretenimentoValues = new ArrayList<>();
+    public Integer totalEstimadoQuilometrosValue = 0, numeroViajantesValue = 0, duracaoDiasValue = 0, totalVeiculosValue = 0, totalNoitesValue = 0, totalQuartosValue = 0, refeicoesDiaValue = 0;
+    public List<EntretenimentoModel> entretenimentoValues = new ArrayList<>();
+    Gasolina gasolina;
+    Hospedagem hospedagem;
+    Aereo aereo;
+    Refeicao refeicao;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -63,9 +84,7 @@ public class NewTrip extends AppCompatActivity {
             return insets;
         });
 
-
-        SQLiteManager sqLiteManager = SQLiteManager.instanceOfDatabase(this);
-
+        //Colocando os listeners para os inputs
         inputSetup();
         configuracoesGeraisSetup();
         combustivelSetup();
@@ -74,100 +93,100 @@ public class NewTrip extends AppCompatActivity {
         hospedagemSetup();
         entretenimentoSetup(this);
 
-        Bundle extras = getIntent().getExtras();
-        if (extras != null) {
-            int extraUserId = extras.getInt("userId");
-            Integer extraTripId = extras.getInt("tripId");
-            userId = extraUserId;
-            if (extraTripId != 0) {
-                Trip currentTrip = sqLiteManager.getTripById(extraTripId);
-                entretenimentoValues = sqLiteManager.listEntreteinmentByTripId(extraTripId);
-                updateHospedagem();
-                updateRefeicoes();
-                updateCombustivel();
-                updateTarifaAerea();
-                updateEntretenimento();
+        Integer extraUserId = ExtraActivity.getUserId(this);
 
-                destinoInput.setText(currentTrip.destino);
-                numeroViajantesInput.setText(currentTrip.numeroViajantes.toString());
-                numeroViajantesValue = currentTrip.numeroViajantes;
-                duracaoDiasInput.setText(currentTrip.duracaoDias.toString());
-                duracaoDiasValue = currentTrip.duracaoDias;
-                totalEstimadoQuilometrosInput.setText(currentTrip.totalEstimadoQuilometros.toString());
-                totalEstimadoQuilometrosValue = currentTrip.totalEstimadoQuilometros;
-                mediaQuilometrosLitroInput.setText(currentTrip.mediaQuilometrosLitro.toString());
-                mediaQuilometrosLitroValue = currentTrip.mediaQuilometrosLitro;
-                custoMedioLitroInput.setText(currentTrip.custoMedioLitro.toString());
-                custoMedioLitroValue = currentTrip.custoMedioLitro;
-                totalVeiculosInput.setText(currentTrip.totalVeiculos.toString());
-                totalVeiculosValue = currentTrip.totalVeiculos;
-                custoEstimadoPessoaInput.setText(currentTrip.custoEstimadoPessoa.toString());
-                custoEstimadoPessoaValue = currentTrip.custoEstimadoPessoa;
-                aluguelVeiculoInput.setText(currentTrip.aluguelVeiculo.toString());
-                aluguelVeiculoValue = currentTrip.aluguelVeiculo;
-                custoEstimadoRefeicaoInput.setText(currentTrip.custoEstimadoRefeicao.toString());
-                custoEstimadoRefeicaoValue = currentTrip.custoEstimadoRefeicao;
-                refeicoesDiaInput.setText(currentTrip.refeicoesDia.toString());
-                refeicoesDiaValue = currentTrip.refeicoesDia;
-                custoMedioNoiteInput.setText(currentTrip.custoMedioNoite.toString());
-                custoMedioNoiteValue = currentTrip.custoMedioNoite;
-                totalNoitesInput.setText(currentTrip.totalNoites.toString());
-                totalNoitesValue = currentTrip.totalNoites;
-                totalQuartosInput.setText(currentTrip.totalQuartos.toString());
-                totalQuartosValue = currentTrip.totalQuartos;
-                combustivelCheckbox.setChecked(currentTrip.combustivel);
-                tarifaAereaCheckbox.setChecked(currentTrip.tarifaAerea);
-                refeicoesCheckbox.setChecked(currentTrip.refeicoes);
-                hospedagemCheckbox.setChecked(currentTrip.refeicoes);
-                for (Entreteinment entreteinment : entretenimentoValues) {
-                    createEntretenimentoElement(this, entreteinment);
-                }
-
-                salvarBtn.setText(R.string.atualizar);
-                salvarBtn.setOnClickListener(v -> {
-                    Trip newTrip = new Trip(extraTripId, destinoInput.getText().toString(), numeroViajantesValue,
-                            duracaoDiasValue, combustivelCheckbox.isChecked(), totalEstimadoQuilometrosValue,
-                            mediaQuilometrosLitroValue, custoMedioLitroValue, totalVeiculosValue, custoMedioNoiteValue,
-                            totalNoitesValue, totalQuartosValue, userId, tarifaAereaCheckbox.isChecked(),
-                            custoEstimadoPessoaValue, aluguelVeiculoValue, refeicoesCheckbox.isChecked(),
-                            custoEstimadoRefeicaoValue, refeicoesDiaValue, hospedagemCheckbox.isChecked());
-                    sqLiteManager.updateTrip(newTrip);
-                    List<Entreteinment> currentEntreteinment = sqLiteManager.listEntreteinmentByTripId(extraTripId);
-                    for (Entreteinment entretenimento : currentEntreteinment) {
-                        sqLiteManager.deleteEntreteinmentById(entretenimento.getId());
-                    }
-                    for (Entreteinment entretenimento : entretenimentoValues) {
-                        entretenimento.setTripId(extraTripId);
-                        sqLiteManager.addEntreteinmentToDatabase(entretenimento);
-                    }
-                    startActivity(new Intent(this, Trips.class));
-                });
-                return;
-            }
+        //Erro caso o id do usuário não for encontrado. Volta para login.
+        if (extraUserId == null) {
+            ExtraActivity.start(this, () -> new Intent(this, LoginActivity.class));
         }
+
+        userId = extraUserId;
+
+        //Como não tem edição, é apenas necessário salvar a viagem.
         salvarBtn.setText(R.string.salvar);
-        salvarBtn.setOnClickListener(v -> {
-            Trip newTrip = new Trip(null, destinoInput.getText().toString(), numeroViajantesValue,
-                    duracaoDiasValue, combustivelCheckbox.isChecked(), totalEstimadoQuilometrosValue,
-                    mediaQuilometrosLitroValue, custoMedioLitroValue, totalVeiculosValue, custoMedioNoiteValue,
-                    totalNoitesValue, totalQuartosValue, userId, tarifaAereaCheckbox.isChecked(),
-                    custoEstimadoPessoaValue, aluguelVeiculoValue, refeicoesCheckbox.isChecked(),
-                    custoEstimadoRefeicaoValue, refeicoesDiaValue, hospedagemCheckbox.isChecked());
-            Trip result = sqLiteManager.addTripToDatabase(newTrip);
-
-            for (Entreteinment entretenimento : entretenimentoValues) {
-                entretenimento.setTripId(result.getId());
-                sqLiteManager.addEntreteinmentToDatabase(entretenimento);
-            }
-            Intent intent = new Intent(this, Trips.class);
-            intent.putExtra("userId", userId);
-            startActivity(intent);
-
-        });
-
+        //Cria a viagem e tenta fazer o POST.
+        salvarBtn.setOnClickListener(v -> saveOnClickListener(salvarBtn, extraUserId));
     }
 
-    public String floatToString(Float value) {
+    private void saveOnClickListener(View v, Integer extraUserId) {
+
+        if (combustivelCheckbox.isChecked()) {
+            gasolina = new Gasolina(
+                    extraUserId,
+                    totalEstimadoQuilometrosValue,
+                    mediaQuilometrosLitroValue,
+                    custoMedioLitroValue,
+                    totalVeiculosValue
+            );
+        }
+
+        if (hospedagemCheckbox.isChecked()) {
+            hospedagem = new Hospedagem(
+                    extraUserId,
+                    custoMedioNoiteValue,
+                    totalNoitesValue,
+                    totalQuartosValue
+            );
+        }
+
+        if (tarifaAereaCheckbox.isChecked()) {
+            aereo = new Aereo(
+                    extraUserId,
+                    custoEstimadoPessoaValue,
+                    aluguelVeiculoValue
+            );
+        }
+
+        if (refeicoesCheckbox.isChecked()) {
+            refeicao = new Refeicao(
+                    extraUserId,
+                    custoEstimadoRefeicaoValue,
+                    refeicoesDiaValue
+            );
+        }
+
+        TripModel newTrip = new TripModel(
+                extraUserId,
+                numeroViajantesValue,
+                duracaoDiasValue,
+                custoTotalValue,
+                custoEstimadoPessoaValue,
+                destinoInput.getText().toString(),
+                gasolina,
+                aereo,
+                hospedagem,
+                refeicao,
+                entretenimentoValues
+        );
+
+        Activity currentActivity = ActivityFinder.getActivity(this);
+        try {
+
+            SweetAlertDialog alert = SweetAlert.showLoadingDialog(currentActivity);
+            API.postTrips(newTrip, new Callback<TripModel>() {
+                @Override
+                public void onResponse(Call<TripModel> call, Response<TripModel> response) {
+                    if (response != null && response.isSuccessful()) {
+                        SweetAlert.closeAnyDialog(alert);
+                        ExtraActivity.start(v.getContext(), () -> {
+                            Intent intent = new Intent(v.getContext(), Trips.class);
+                            return ExtraActivity.setUserId(intent, extraUserId);
+                        });
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<TripModel> call, Throwable t) {
+                    SweetAlert.closeAnyDialog(alert);
+                    SweetAlert.showErrorDialog(currentActivity, "Erro ao salvar viagem");
+                }
+            });
+        } catch (Exception e) {
+            SweetAlert.showErrorDialog(currentActivity, "Erro ao salvar viagem");
+        }
+    }
+
+    public String doubleToString(Double value) {
         return String.format(Locale.CANADA_FRENCH, "%.2f", value);
     }
 
@@ -261,7 +280,7 @@ public class NewTrip extends AppCompatActivity {
                     totalEstimadoQuilometrosValue = 0;
                     return;
                 }
-                totalEstimadoQuilometrosValue = Float.parseFloat(s.toString());
+                totalEstimadoQuilometrosValue = Integer.parseInt(s.toString());
             }
 
             @Override
@@ -336,21 +355,21 @@ public class NewTrip extends AppCompatActivity {
         combustivelCheckbox.addOnCheckedStateChangedListener((materialCheckBox, i) -> {
             if (materialCheckBox.isChecked()) {
                 custoTotalValue += custoCombustivelValue;
-                custoTotal.setText(floatToString(custoTotalValue));
+                custoTotal.setText(doubleToString(custoTotalValue));
             } else {
                 custoTotalValue -= custoCombustivelValue;
-                custoTotal.setText(floatToString(custoTotalValue));
+                custoTotal.setText(doubleToString(custoTotalValue));
             }
         });
     }
 
     public void updateCombustivel() {
-        float result = 0;
+        double result = 0;
         if (mediaQuilometrosLitroValue != 0 && totalVeiculosValue != 0) {
             result = ((totalEstimadoQuilometrosValue / mediaQuilometrosLitroValue) * custoMedioLitroValue) / totalVeiculosValue;
         }
         custoCombustivelValue = result;
-        custoCombustivel.setText(floatToString(result));
+        custoCombustivel.setText(doubleToString(result));
     }
 
     public void tarifaAereaSetup() {
@@ -399,19 +418,19 @@ public class NewTrip extends AppCompatActivity {
         tarifaAereaCheckbox.addOnCheckedStateChangedListener((materialCheckBox, i) -> {
             if (materialCheckBox.isChecked()) {
                 custoTotalValue += custoTarifaAereaValue;
-                custoTotal.setText(floatToString(custoTotalValue));
+                custoTotal.setText(doubleToString(custoTotalValue));
             } else {
                 custoTotalValue -= custoTarifaAereaValue;
-                custoTotal.setText(floatToString(custoTotalValue));
+                custoTotal.setText(doubleToString(custoTotalValue));
             }
         });
     }
 
     public void updateTarifaAerea() {
-        float result = 0;
+        double result = 0;
         result = (custoEstimadoPessoaValue * numeroViajantesValue) + aluguelVeiculoValue;
         custoTarifaAereaValue = result;
-        custoTarifaAerea.setText(floatToString(result));
+        custoTarifaAerea.setText(doubleToString(result));
     }
 
     public void refeicoesSetup() {
@@ -460,19 +479,19 @@ public class NewTrip extends AppCompatActivity {
         refeicoesCheckbox.addOnCheckedStateChangedListener((materialCheckBox, i) -> {
             if (materialCheckBox.isChecked()) {
                 custoTotalValue += custoRefeicoesValue;
-                custoTotal.setText(floatToString(custoTotalValue));
+                custoTotal.setText(doubleToString(custoTotalValue));
             } else {
                 custoTotalValue -= custoRefeicoesValue;
-                custoTotal.setText(floatToString(custoTotalValue));
+                custoTotal.setText(doubleToString(custoTotalValue));
             }
         });
     }
 
     public void updateRefeicoes() {
-        float result;
+        double result;
         result = ((refeicoesDiaValue * numeroViajantesValue) * custoEstimadoRefeicaoValue) * duracaoDiasValue;
         custoRefeicoesValue = result;
-        custoRefeicoes.setText(floatToString(result));
+        custoRefeicoes.setText(doubleToString(result));
     }
 
     public void hospedagemSetup() {
@@ -542,30 +561,28 @@ public class NewTrip extends AppCompatActivity {
         hospedagemCheckbox.addOnCheckedStateChangedListener((materialCheckBox, i) -> {
             if (materialCheckBox.isChecked()) {
                 custoTotalValue += custoHospedagemValue;
-                custoTotal.setText(floatToString(custoTotalValue));
+                custoTotal.setText(doubleToString(custoTotalValue));
             } else {
                 custoTotalValue -= custoHospedagemValue;
-                custoTotal.setText(floatToString(custoTotalValue));
+                custoTotal.setText(doubleToString(custoTotalValue));
             }
         });
     }
 
     public void updateHospedagem() {
-        float result;
+        double result;
         result = (custoMedioNoiteValue * totalNoitesValue) * totalQuartosValue;
         custoHospedagemValue = result;
-        custoHospedagem.setText(floatToString(result));
+        custoHospedagem.setText(doubleToString(result));
     }
 
     public void entretenimentoSetup(Context context) {
-
-
         adicionarBtn.setOnClickListener(v -> {
-            createEntretenimentoElement(context, new Entreteinment());
+            createEntretenimentoElement(context, new EntretenimentoModel(userId, "", 0));
         });
     }
 
-    public void createEntretenimentoElement(Context context, Entreteinment entreteinment) {
+    public void createEntretenimentoElement(Context context, EntretenimentoModel entreteinment) {
         LinearLayout entretenimentoLayout;
         EditText entretenimentoNome, entretenimentoValor;
         ImageButton deleteBtn;
@@ -597,10 +614,10 @@ public class NewTrip extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (s.length() == 0) {
-                    entreteinment.setName("");
+                    entreteinment.entretenimento = "";
                     return;
                 }
-                entreteinment.setName(s.toString());
+                entreteinment.entretenimento = s.toString();
             }
 
             @Override
@@ -624,10 +641,10 @@ public class NewTrip extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (s.length() == 0) {
-                    entreteinment.setPrice(0f);
+                    entreteinment.valor = 0d;
                     return;
                 }
-                entreteinment.setPrice(Float.parseFloat(s.toString()));
+                entreteinment.valor = Double.parseDouble(s.toString());
             }
 
             @Override
@@ -651,12 +668,12 @@ public class NewTrip extends AppCompatActivity {
             parent.removeView(entretenimentoLayout);
         });
 
-        if (entreteinment.getName() != null) {
-            entretenimentoNome.setText(entreteinment.getName());
+        if (entreteinment.entretenimento != null) {
+            entretenimentoNome.setText(entreteinment.entretenimento);
         }
-        if (entreteinment.getPrice() != null) {
+        if (entreteinment.valor != 0) {
 
-            entretenimentoValor.setText(entreteinment.getPrice().toString());
+            entretenimentoValor.setText(doubleToString(entreteinment.valor));
         }
 
 
@@ -672,9 +689,9 @@ public class NewTrip extends AppCompatActivity {
     }
 
     public void updateEntretenimento() {
-        Float result = 0f;
-        for (Entreteinment current : entretenimentoValues) {
-            result += current.getPrice();
+        double result = 0d;
+        for (EntretenimentoModel current : entretenimentoValues) {
+            result += current.valor;
         }
         if (result > entretenimentoTemporario) {
             custoTotalValue += (result - entretenimentoTemporario);
@@ -682,34 +699,8 @@ public class NewTrip extends AppCompatActivity {
             custoTotalValue -= (entretenimentoTemporario - result);
         }
         entretenimentoTemporario = result;
-        custoEntretenimento.setText(floatToString(result));
-        custoTotal.setText(floatToString(custoTotalValue));
+        custoEntretenimento.setText(doubleToString(result));
+        custoTotal.setText(doubleToString(custoTotalValue));
     }
-
-//    public float calculoTotal(Boolean hospedagem, Boolean refeicoes, Boolean tarifaAerea, Boolean combustivel,
-//                              float custoMedioNoiteValue, Integer totalNoitesValue, Integer totalQuartosValue,
-//                              Integer refeicoesDiaValue, Integer numeroViajantesValue, float custoEstimadoRefeicaoValue,
-//                              Integer duracaoDiasValue, float custoEstimadoPessoaValue, float aluguelVeiculoValue,
-//                              float mediaQuilometrosLitroValue, Integer totalVeiculosValue, float totalEstimadoQuilometrosValue,
-//                              float custoMedioLitroValue, List<Entreteinment> entretenimentoValues){
-//        float result = 0;
-//        if(hospedagem){
-//            result += (custoMedioNoiteValue*totalNoitesValue)*totalQuartosValue;
-//        }
-//        if(refeicoes){
-//            result += ((refeicoesDiaValue*numeroViajantesValue)*custoEstimadoRefeicaoValue)*duracaoDiasValue;
-//        }
-//        if(tarifaAerea){
-//            result += (custoEstimadoPessoaValue*numeroViajantesValue) + aluguelVeiculoValue;
-//        }
-//
-//        if(combustivel && mediaQuilometrosLitroValue!=0 && totalVeiculosValue!=0){
-//            result = ((totalEstimadoQuilometrosValue/mediaQuilometrosLitroValue)*custoMedioLitroValue)/totalVeiculosValue;
-//        }
-//        for (Entreteinment current: entretenimentoValues) {
-//            result+=current.getPrice();
-//        }
-//        return result;
-//    }
 
 }
